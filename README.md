@@ -1,2 +1,2 @@
-# combine-page
+# combine-orders
 UI to Combine Service Jobs
