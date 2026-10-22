@@ -42,6 +42,8 @@
     .item-name a { color: inherit; }
     .group { font-size: 13px; color: #757575; }
     .soldto { font-size: 14px; margin-top: 2px; }
+    .notes { font-size: 13px; margin-top: 8px; white-space: pre-wrap; word-break: break-word; }
+    .notes span { color: #9e9e9e; display: block; font-size: 11px; text-transform: uppercase; }
     .vals { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 4px 12px; font-size: 13px; margin-top: 8px; }
     .vals span { color: #9e9e9e; display: block; font-size: 11px; text-transform: uppercase; }
     .badge { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
@@ -251,6 +253,13 @@
       container.appendChild(g);
     }
 
+    function renderNotes(container, text) {
+      var d = el("div", "notes");
+      d.appendChild(el("span", null, "Mid-Notes"));
+      d.appendChild(document.createTextNode(text || "—"));
+      container.appendChild(d);
+    }
+
     function renderParent(p, labels) {
       var box = $("parentBox");
       box.textContent = "";
@@ -261,6 +270,7 @@
       item.appendChild(top);
       item.appendChild(el("div", "soldto", (p.soldTo || "(no Sold-To)") + "  |  " + (p.city || "(no City, State)")));
       if (labels) renderValues(item, labels, p.values || []);
+      renderNotes(item, p.notes);
       box.appendChild(item);
     }
 
@@ -290,6 +300,7 @@
         if (c.soldTo !== undefined) {
           item.appendChild(el("div", "soldto", (c.soldTo || "(no Sold-To)") + "  |  " + (c.city || "(no City, State)")));
           renderValues(item, data.copyCols, c.values || []);
+          renderNotes(item, c.notes);
         }
 
         if (!disabled) {
