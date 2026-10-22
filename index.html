@@ -212,7 +212,7 @@
       $("results").classList.add("hidden");
       $("reviewBtn").classList.add("hidden");
       $("backBtn").classList.add("hidden");
-      callApi("action=load&p=" + encodeURIComponent(parentId) + "&c=" + encodeURIComponent(childParam),
+      callApi("action=load&p=" + encodeURIComponent(parentId) + "&k=" + encodeURIComponent(childParam),
         LOAD_TIMEOUT_MS, onLoad);
     }
 
@@ -373,7 +373,7 @@
       $("review").classList.add("hidden");
       $("reviewBtn").classList.add("hidden");
       spinner("Submitting...", "Moving " + mv.length + " job(s). This can take a minute; don't close this tab.");
-      callApi("action=commit&p=" + encodeURIComponent(parentId) + "&c=" + encodeURIComponent(childParam) +
+      callApi("action=commit&p=" + encodeURIComponent(parentId) + "&k=" + encodeURIComponent(childParam) +
         "&move=" + encodeURIComponent(mv.join(",")) + "&dismiss=" + encodeURIComponent(ds.join(",")) +
         "&who=" + encodeURIComponent($("whoSelect").value), SUBMIT_TIMEOUT_MS, onSubmit);
     }
