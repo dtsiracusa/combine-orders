@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Wieland Healthcare — Upcoming Week Review</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+      max-width: 900px;
+      width: 94%;
+      overflow: hidden;
+    }
+    .card-header { padding: 28px 24px 16px; text-align: center; }
+    .icon { font-size: 40px; }
+    .card-header h1 { margin: 8px 0 0; font-size: 22px; color: #212121; }
+    .logo { width: 100%; max-width: 160px; height: auto; margin-bottom: 8px; }
+    .card-body { padding: 20px 24px; color: #555; font-size: 15px; line-height: 1.5; }
+    .card-footer { padding: 16px 24px 24px; text-align: center; border-top: 1px solid #eee; }
+    .ready .card-header, .loading .card-header, .info .card-header { background: #e3f2fd; }
+    .ready .icon, .loading .icon, .info .icon { color: #1565c0; }
+    .success .card-header { background: #e8f5e9; }
+    .success .icon { color: #2e7d32; }
+    .fail .card-header { background: #fce4ec; }
+    .fail .icon { color: #c62828; }
+    .message { font-size: 17px; text-align: center; margin: 0 0 8px; white-space: pre-line; }
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      color: #fff;
+      background: #1565c0;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid #90caf9;
+      outline-offset: 2px;
+    }
+    .btn-secondary { background: #9e9e9e; margin-right: 8px; }
+    .btn-small { padding: 6px 14px; font-size: 14px; }
+    .btn-outline { background: #fff; color: #1565c0; border: 1px solid #1565c0; }
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ccc;
+      border-top: 4px solid #1565c0;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .who { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .who label { font-size: 14px; }
+    .who select {
+      padding: 6px 10px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: inherit;
+    }
+    .counts { font-size: 14px; color: #555; margin: 8px 0 12px; }
+    .item {
+      border: 1px solid #e0e0e0;
+      border-left: 6px solid var(--gc, #e0e0e0);
+      border-radius: 8px;
+      padding: 36px 14px 12px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .item.disabled { background: #fafafa; color: #9e9e9e; }
+    .item.disabled .cs-tab, .item.disabled .chip { opacity: .55; }
+    .cs-tab {
+      position: absolute;
+      top: 0;
+      right: 0;
+      max-width: 200px;
+      padding: 4px 12px;
+      border-radius: 0 7px 0 10px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cs-tab span {
+      display: block;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      opacity: .85;
+    }
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 6px 16px;
+      flex-wrap: wrap;
+    }
+    .soldto { font-size: 16px; font-weight: 600; color: #212121; }
+    .item.disabled .soldto { color: #9e9e9e; }
+    .city { font-size: 14px; }
+    .item-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: #212121;
+      text-align: right;
+      margin-left: auto;
+    }
+    .item.disabled .item-name { color: #9e9e9e; }
+    .item-name a { color: inherit; }
+    .label {
+      color: #9e9e9e;
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .chips {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 6px 12px;
+      margin-top: 10px;
+    }
+    .chip {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 10px;
+      background: #c4c4c4;
+      color: #212121;
+    }
+    .vals {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 6px 12px;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    .vals a { color: #1565c0; word-break: break-all; }
+    .notes { font-size: 13px; margin-top: 10px; white-space: pre-wrap; word-break: break-word; }
+    .choices { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .choices label {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .choices input { margin: 0 6px 0 0; }
+    .choices label.on-approve { background: #e8f5e9; border-color: #2e7d32; }
+    .note { font-size: 13px; margin-top: 10px; color: #616161; }
+    .note.warn { color: #ad1457; }
+    .result-row {
+      border-left: 4px solid #9e9e9e;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background: #fafafa;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .result-row.ok { border-color: #2e7d32; }
+    .result-row.partial { border-color: #ef6c00; }
+    .result-row.failed { border-color: #c62828; }
+    .result-row.skipped { border-color: #9e9e9e; }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 520px;
+      width: 92%;
+      margin: 32px auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    }
+    .modal h2 {
+      margin: 0;
+      padding: 18px 24px;
+      font-size: 18px;
+      color: #212121;
+      border-bottom: 1px solid #eee;
+    }
+    .modal-body { padding: 16px 24px; font-size: 14px; color: #444; line-height: 1.5; }
+    .modal-body ul { margin: 6px 0 12px; padding-left: 20px; }
+    .modal-footer { padding: 14px 24px 18px; text-align: right; border-top: 1px solid #eee; }
+    .modal-footer .btn { font-size: 15px; padding: 10px 22px; }
+    .hidden { display: none !important; }
+    @media (max-width: 480px) {
+      .cs-tab { max-width: 80%; }
+      .item-name { text-align: left; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card loading" id="card">
+    <div class="card-header">
+      <!-- PASTE LOGO SVG HERE -->
+      <div class="icon" id="icon">
+        <div class="spinner"></div>
+      </div>
+      <h1 id="title">Loading...</h1>
+    </div>
+    <div class="card-body">
+      <p class="message" id="message">Please wait while the items are loaded.</p>
+      <div id="review" class="hidden">
+        <div class="toolbar">
+          <div class="who">
+            <label for="whoSelect">Confirmed by:</label>
+            <select id="whoSelect"></select>
+          </div>
+          <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
+        </div>
+        <p class="counts" id="counts" aria-live="polite"></p>
+        <div id="itemList"></div>
+      </div>
+      <div id="results" class="hidden"></div>
+    </div>
+    <div class="card-footer" id="footer">
+      <button type="button" class="btn hidden" id="reviewBtn" disabled>Review &amp; Confirm</button>
+      <button type="button" class="btn hidden" id="backBtn">Back to Items</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal">
+      <h2 id="confirmTitle">Confirm Approvals</h2>
+      <div class="modal-body" id="confirmBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+        <button type="button" class="btn" id="submitBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // UPDATE THIS to the Upcoming Week Review Apps Script deployment URL (/exec).
+    var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzL7g4h_t1H7Ki6igol5MU4QAOK3T5DLIy0cBW3joQssNC81WzZekPp2cY_tGbBEJfQ/exec";
+    // People who can be selected as the confirmer. The first entry is the default.
+    var CONFIRMERS = ["Dante Siracusa", "Joshua McCann"];
+    var LOAD_TIMEOUT_MS = 60000;
+    var SUBMIT_TIMEOUT_MS = 180000;
+
+    // Column placement on the card (IDs from upcoming_week_columns.json)
+    var COLOR_COL = "color_mkzwg28s";          // top-right tab + left border
+    var REVIEW_COL = "color_mm4eb90g";
+    var SOLD_TO_COL = "text_mm1b4w1t";         // header left
+    var CITY_COL = "text_mm1dy2mz";            // header left
+    var CHIP_COLS = ["color_mm4eb90g", "color_mm1c7719", "color_mm1jzrpg", "color_mm4f444k"];
+    var NOTE_COLS = ["text_mkzvy6d3", "long_text_mm2cz7x7", "long_text_mm1tfndn"];
+    var HEADER_COLS = [COLOR_COL, SOLD_TO_COL, CITY_COL];
+
+    var data = null;      // last load response
+    var choices = {};     // itemId -> "leave" | "approve"
+    var busy = false;
+    var $ = function (id) { return document.getElementById(id); };
+
+    // ---------- JSONP ----------
+    var jsonpSeq = 0;
+    function callApi(query, timeoutMs, done) {
+      var name = "uwCb" + (++jsonpSeq) + "_" + Date.now();
+      var finished = false;
+      var script = document.createElement("script");
+      var timer = setTimeout(function () {
+        end({
+          success: false, title: "Taking Too Long",
+          message: "The service didn't respond. Reload the page to see the current state before trying again."
+        });
+      }, timeoutMs);
+      function end(res) {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        try { delete window[name]; } catch (e) { window[name] = undefined; }
+        if (script.parentNode) script.parentNode.removeChild(script);
+        done(res || { success: false, title: "Error", message: "Empty response." });
+      }
+      window[name] = end;
+      script.src = APPS_SCRIPT_URL + "?" + query + "&callback=" + name + "&_=" + Date.now();
+      script.onerror = function () {
+        end({ success: false, title: "Error", message: "Couldn't reach the service. Try again in a few minutes." });
+      };
+      document.body.appendChild(script);
+    }
+
+    // ---------- Helpers ----------
+    function setState(cls, icon, title, message) {
+      $("card").className = "card " + cls;
+      $("icon").innerHTML = icon;     // icon is always a fixed literal in this file
+      $("title").textContent = title;
+      $("message").textContent = message || "";
+      $("message").classList.toggle("hidden", !message);
+      document.title = title + " — Wieland Healthcare";
+    }
+    function spinner(title, msg) { setState("loading", '<div class="spinner"></div>', title, msg); }
+    function el(tag, cls, text) {
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined && text !== null) e.textContent = text;
+      return e;
+    }
+    function link(text, url) {
+      if (!url) return document.createTextNode(text);
+      var a = el("a", null, text); a.href = url; a.target = "_blank"; a.rel = "noopener"; return a;
+    }
+    function validHex(h) { return /^#[0-9a-f]{6}$/i.test(h || ""); }
+    function textOn(hex) {
+      var n = parseInt(hex.slice(1), 16);
+      var lum = 0.299 * (n >> 16 & 255) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255);
+      return lum > 160 ? "#212121" : "#ffffff";
+    }
+    function fieldMap(it) {
+      var m = {};
+      it.fields.forEach(function (f) { m[f.id] = f; });
+      return m;
+    }
+    function dash(t) { return (t && String(t).trim()) ? t : "-"; }
+
+    // ---------- Load ----------
+    function load() {
+      if (APPS_SCRIPT_URL.indexOf("PASTE") === 0) {
+        setState("fail", "\u2718", "Not Configured", "APPS_SCRIPT_URL has not been set in this page.");
+        return;
+      }
+      spinner("Loading...", "Please wait while this week's items are loaded.");
+      $("review").classList.add("hidden");
+      $("results").classList.add("hidden");
+      $("reviewBtn").classList.add("hidden");
+      $("backBtn").classList.add("hidden");
+      callApi("action=load", LOAD_TIMEOUT_MS, onLoad);
+    }
+
+    function onLoad(res) {
+      if (!res.success) {
+        setState("fail", "\u2718", res.title || "Error", res.message || "");
+        $("backBtn").classList.remove("hidden");
+        return;
+      }
+      data = res;
+      choices = {};
+      if (!res.items.length) {
+        setState("info", "\u2139", "Upcoming Week Review",
+          "There are no items in \u201c" + (res.groupTitle || "This Week (Locked)") + "\u201d right now.");
+        return;
+      }
+      setState("ready", "&#128203;", "Upcoming Week Review",
+        "Review each job in \u201c" + res.groupTitle + "\u201d. Choose Approve for jobs that are ready, " +
+        "then select Review & Confirm. Approved jobs have their Review Status set to Approved.");
+      renderItems();
+      $("review").classList.remove("hidden");
+      $("reviewBtn").classList.remove("hidden");
+      updateReviewBtn();
+    }
+
+    // ---------- Render ----------
+    function renderItems() {
+      var list = $("itemList");
+      list.textContent = "";
+      data.items.forEach(function (it) {
+        var f = fieldMap(it);
+        var disabled = !!it.approved;
+        var item = el("div", "item" + (disabled ? " disabled" : ""));
+        if (validHex(it.colorStatusColor)) item.style.setProperty("--gc", it.colorStatusColor);
+
+        // Top-right: Color Status tab
+        var tab = el("div", "cs-tab");
+        tab.appendChild(el("span", null, "Color Status"));
+        tab.appendChild(document.createTextNode(dash(it.colorStatus)));
+        var bg = validHex(it.colorStatusColor) ? it.colorStatusColor : "#c4c4c4";
+        tab.style.background = bg; tab.style.color = textOn(bg);
+        tab.title = "Color Status: " + dash(it.colorStatus);
+        item.appendChild(tab);
+
+        // Header: Sold To / City (left), item name (right)
+        var head = el("div", "item-head");
+        var left = el("div");
+        left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
+        left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
+        head.appendChild(left);
+        var n = el("div", "item-name");
+        n.appendChild(link(it.name, it.srUrl || it.url));
+        n.title = it.srUrl ? "Open Service Request" : "Open in monday";
+        head.appendChild(n);
+        item.appendChild(head);
+
+        // Status chips
+        var chips = el("div", "chips");
+        CHIP_COLS.forEach(function (id) {
+          var x = f[id]; if (!x) return;
+          var d = el("div");
+          d.appendChild(el("span", "label", x.title));
+          var txt = x.text || (id === REVIEW_COL ? "Not Yet" : "");
+          var c = el("span", "chip", dash(txt));
+          if (txt && validHex(x.color)) { c.style.background = x.color; c.style.color = textOn(x.color); }
+          d.appendChild(c);
+          chips.appendChild(d);
+        });
+        item.appendChild(chips);
+
+        // Remaining fields in JSON order
+        var vals = el("div", "vals");
+        it.fields.forEach(function (x) {
+          if (HEADER_COLS.indexOf(x.id) !== -1 || CHIP_COLS.indexOf(x.id) !== -1 || NOTE_COLS.indexOf(x.id) !== -1) return;
+          var d = el("div");
+          d.appendChild(el("span", "label", x.title));
+          if (x.type === "link" && x.url) d.appendChild(link(x.text || x.url, x.url));
+          else d.appendChild(document.createTextNode(dash(x.text)));
+          vals.appendChild(d);
+        });
+        item.appendChild(vals);
+
+        // Notes (full width)
+        NOTE_COLS.forEach(function (id) {
+          var x = f[id]; if (!x) return;
+          var d = el("div", "notes");
+          d.appendChild(el("span", "label", x.title));
+          d.appendChild(document.createTextNode(dash(x.text)));
+          item.appendChild(d);
+        });
+
+        // Choices or note
+        if (disabled) {
+          item.appendChild(el("div", "note", it.note || "Already Approved."));
+        } else {
+          var ch = el("div", "choices");
+          ch.setAttribute("role", "radiogroup");
+          ch.setAttribute("aria-label", "Review for " + it.name);
+          [["approve", "Approve"], ["leave", "Leave as is"]].forEach(function (o) {
+            var lab = el("label");
+            var r = document.createElement("input");
+            r.type = "radio"; r.name = "ch_" + it.id; r.value = o[0];
+            r.checked = (choices[it.id] || "leave") === o[0];
+            r.addEventListener("change", function () {
+              choices[it.id] = o[0];
+              refreshChoiceStyles(ch);
+              updateReviewBtn();
+            });
+            lab.appendChild(r); lab.appendChild(document.createTextNode(o[1]));
+            ch.appendChild(lab);
+          });
+          refreshChoiceStyles(ch);
+          item.appendChild(ch);
+        }
+        list.appendChild(item);
+      });
+      updateCounts();
+    }
+
+    function refreshChoiceStyles(ch) {
+      Array.prototype.forEach.call(ch.querySelectorAll("label"), function (lab) {
+        var r = lab.querySelector("input");
+        lab.className = r.checked && r.value === "approve" ? "on-approve" : "";
+      });
+    }
+
+    function available() { return data.items.filter(function (it) { return !it.approved; }); }
+    function selected() { return available().filter(function (it) { return choices[it.id] === "approve"; }); }
+
+    function updateCounts() {
+      if (!data) return;
+      $("counts").textContent = data.items.length + " item(s), " + available().length + " awaiting review, " +
+        selected().length + " selected to approve.";
+    }
+    function updateReviewBtn() {
+      $("reviewBtn").disabled = busy || selected().length === 0;
+      $("approveAllBtn").disabled = busy || available().length === 0;
+      updateCounts();
+    }
+    function approveAll() {
+      available().forEach(function (it) { choices[it.id] = "approve"; });
+      renderItems();
+      updateReviewBtn();
+    }
+
+    // ---------- Confirm ----------
+    function openConfirm() {
+      var ap = selected();
+      var body = $("confirmBody");
+      body.textContent = "";
+      body.appendChild(el("div", null, "Confirmed by: " + $("whoSelect").value));
+      body.appendChild(el("p", null, "Set Review Status to Approved on " + ap.length + " job(s):"));
+      var ul = el("ul");
+      ap.forEach(function (it) {
+        var f = fieldMap(it);
+        var sold = f[SOLD_TO_COL] && f[SOLD_TO_COL].text;
+        ul.appendChild(el("li", null, it.name + (sold ? " \u2014 " + sold : "")));
+      });
+      body.appendChild(ul);
+      $("confirmModal").classList.add("open");
+      $("submitBtn").focus();
+    }
+    function closeConfirm() { $("confirmModal").classList.remove("open"); }
+
+    function submit() {
+      if (busy) return;
+      busy = true;
+      closeConfirm();
+      var ids = selected().map(function (it) { return it.id; });
+      $("review").classList.add("hidden");
+      $("reviewBtn").classList.add("hidden");
+      spinner("Submitting...", "Approving " + ids.length + " job(s). This can take a minute; don't close this tab.");
+      callApi("action=commit&ids=" + encodeURIComponent(ids.join(",")) +
+        "&who=" + encodeURIComponent($("whoSelect").value), SUBMIT_TIMEOUT_MS, onSubmit);
+    }
+
+    function onSubmit(res) {
+      busy = false;
+      if (!res.success) {
+        setState("fail", "\u2718", res.title || "Error", res.message || "");
+        $("backBtn").classList.remove("hidden");
+        return;
+      }
+      var bad = res.results.filter(function (r) { return r.result !== "OK"; }).length;
+      setState(bad ? "info" : "success", bad ? "\u2139" : "\u2714", bad ? "Submitted With Notes" : "Done",
+        bad ? "Some items need attention. Details are below and in the log." : "All selected jobs were approved.");
+      var box = $("results");
+      box.textContent = "";
+      res.results.forEach(function (r) {
+        var row = el("div", "result-row " + String(r.result || "").toLowerCase());
+        row.appendChild(el("strong", null, r.name + " \u2014 " + r.action + ": " + r.result));
+        if (r.note) row.appendChild(el("div", "note" + (r.result === "OK" ? "" : " warn"), r.note));
+        box.appendChild(row);
+      });
+      box.classList.remove("hidden");
+      $("backBtn").classList.remove("hidden");
+    }
+
+    // ---------- Init ----------
+    (function init() {
+      var sel = $("whoSelect");
+      CONFIRMERS.forEach(function (n, i) {
+        var o = el("option", null, n); o.value = n; if (i === 0) o.selected = true; sel.appendChild(o);
+      });
+      $("approveAllBtn").addEventListener("click", approveAll);
+      $("reviewBtn").addEventListener("click", openConfirm);
+      $("cancelBtn").addEventListener("click", closeConfirm);
+      $("submitBtn").addEventListener("click", submit);
+      $("backBtn").addEventListener("click", load);
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && $("confirmModal").classList.contains("open")) closeConfirm();
+      });
+      load();
+    })();
+  </script>
+</body>
+</html>
