@@ -130,8 +130,8 @@
       font-size: 17px;
       font-weight: 600;
       color: #212121;
-      text-align: right;
-      margin-left: auto;
+      text-align: left;
+      margin-left: 0;
     }
     .item.disabled .item-name { color: #9e9e9e; }
     .item-name a { color: inherit; }
@@ -158,7 +158,7 @@
     }
     .vals {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 6px 12px;
       font-size: 13px;
       margin-top: 10px;
@@ -221,6 +221,11 @@
     .modal-footer { padding: 14px 24px 18px; text-align: right; border-top: 1px solid #eee; }
     .modal-footer .btn { font-size: 15px; padding: 10px 22px; }
     .hidden { display: none !important; }
+    @media (max-width: 600px) {
+      .vals {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
     @media (max-width: 480px) {
       .cs-tab { max-width: 80%; }
       .item-name { text-align: left; margin-left: 0; }
@@ -277,11 +282,17 @@
     var SUBMIT_TIMEOUT_MS = 180000;
 
     // Column placement on the card (IDs from upcoming_week_columns.json)
-    var COLOR_COL = "color_mkzwg28s";          // top-right tab + left border
-    var REVIEW_COL = "color_mm4eb90g";
+    var COLOR_COL = "color_mkzwg28s";          // left border
+    var REVIEW_COL = "color_mm4eb90g";         // top-right tab
+    var TECH_APPROVED_COL = "color_mm8dp78e";
     var SOLD_TO_COL = "text_mm1b4w1t";         // header left
     var CITY_COL = "text_mm1dy2mz";            // header left
-    var CHIP_COLS = ["color_mm4eb90g", "color_mm1c7719", "color_mm1jzrpg", "color_mm4f444k"];
+    var CHIP_COLS = ["color_mm1c7719", "color_mm1jzrpg", "color_mm8dp78e"];
+    // Field grid, 4 per row, left to right
+    var GRID_COLS = [
+      "date_mm07cg6e", "text_mm6bsqmj", "text_mm6dtr7m", "text_mm2d9dby",
+      "multiple_person_mm1jx2c0", "phone_mm2esv7g", "phone_mm6dsdnq", "phone_mm2cz2nr"
+    ];
     var NOTE_COLS = ["text_mkzvy6d3", "long_text_mm2cz7x7", "long_text_mm1tfndn"];
     var HEADER_COLS = [COLOR_COL, SOLD_TO_COL, CITY_COL];
 
@@ -397,25 +408,27 @@
         var item = el("div", "item" + (disabled ? " disabled" : ""));
         if (validHex(it.colorStatusColor)) item.style.setProperty("--gc", it.colorStatusColor);
 
-        // Top-right: Color Status tab
+        // Top-right: Review Status tab
+        var rv = f[REVIEW_COL] || {};
+        var rvText = rv.text || "Not Yet";
         var tab = el("div", "cs-tab");
-        tab.appendChild(el("span", null, "Color Status"));
-        tab.appendChild(document.createTextNode(dash(it.colorStatus)));
-        var bg = validHex(it.colorStatusColor) ? it.colorStatusColor : "#c4c4c4";
+        tab.appendChild(el("span", null, "Review Status"));
+        tab.appendChild(document.createTextNode(rvText));
+        var bg = (rv.text && validHex(rv.color)) ? rv.color : "#c4c4c4";
         tab.style.background = bg; tab.style.color = textOn(bg);
-        tab.title = "Color Status: " + dash(it.colorStatus);
+        tab.title = "Review Status: " + rvText;
         item.appendChild(tab);
 
-        // Header: Sold To / City (left), item name (right)
+        // Header (left): item name, Sold To, City
         var head = el("div", "item-head");
         var left = el("div");
-        left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
-        left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
-        head.appendChild(left);
         var n = el("div", "item-name");
         n.appendChild(link(it.name, it.srUrl || it.url));
         n.title = it.srUrl ? "Open Service Request" : "Open in monday";
-        head.appendChild(n);
+        left.appendChild(n);
+        left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
+        left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
+        head.appendChild(left);
         item.appendChild(head);
 
         // Status chips
@@ -424,7 +437,7 @@
           var x = f[id]; if (!x) return;
           var d = el("div");
           d.appendChild(el("span", "label", x.title));
-          var txt = x.text || (id === REVIEW_COL ? "Not Yet" : "");
+          var txt = x.text || ((id === REVIEW_COL || id === TECH_APPROVED_COL) ? "Not Yet" : "");
           var c = el("span", "chip", dash(txt));
           if (txt && validHex(x.color)) { c.style.background = x.color; c.style.color = textOn(x.color); }
           d.appendChild(c);
@@ -432,10 +445,10 @@
         });
         item.appendChild(chips);
 
-        // Remaining fields in JSON order
+        // Field grid in GRID_COLS order (Review Status and Service Request are not listed)
         var vals = el("div", "vals");
-        it.fields.forEach(function (x) {
-          if (HEADER_COLS.indexOf(x.id) !== -1 || CHIP_COLS.indexOf(x.id) !== -1 || NOTE_COLS.indexOf(x.id) !== -1) return;
+        GRID_COLS.forEach(function (id) {
+          var x = f[id]; if (!x) return;
           var d = el("div");
           d.appendChild(el("span", "label", x.title));
           if (x.type === "link" && x.url) d.appendChild(link(x.text || x.url, x.url));
