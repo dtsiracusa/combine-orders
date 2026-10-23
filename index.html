@@ -33,14 +33,14 @@
                border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .section-title { font-size: 13px; font-weight: 600; color: #1565c0; text-transform: uppercase; letter-spacing: .04em; margin: 18px 0 8px; }
-    .item { border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
-    .item.parent { border-color: #90caf9; background: #f5faff; }
+    .item { border: 1px solid #e0e0e0; border-left: 6px solid var(--gc, #e0e0e0); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; position: relative; }
+    .item.parent { border-color: #90caf9; border-left-color: var(--gc, #90caf9); background: #f5faff; }
     .item.disabled { background: #fafafa; color: #9e9e9e; }
     .item-top { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
     .item-name { font-size: 17px; font-weight: 600; color: #212121; }
     .item.disabled .item-name { color: #9e9e9e; }
     .item-name a { color: inherit; }
-    .group { font-size: 13px; color: #757575; }
+    .group { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #eeeeee; color: #616161; }
     .soldto { font-size: 14px; margin-top: 2px; }
     .notes { font-size: 13px; margin-top: 8px; white-space: pre-wrap; word-break: break-word; }
     .notes span { color: #9e9e9e; display: block; font-size: 11px; text-transform: uppercase; }
@@ -51,6 +51,12 @@
     .b-possible { background: #fff8e1; color: #8d6e00; }
     .b-other { background: #fce4ec; color: #ad1457; }
     .b-nocity { background: #eeeeee; color: #616161; }
+    .sot { position: absolute; top: 0; right: 0; max-width: 140px; padding: 4px 12px; border-radius: 0 7px 0 10px;
+           font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sot span { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: .04em; opacity: .85; }
+    .item-top.has-sot { padding-right: 150px; }
+    .item.disabled .sot, .item.disabled .group { opacity: .55; }
+    @media (max-width: 480px) { .item-top.has-sot { padding-right: 0; margin-top: 30px; } .sot { max-width: 80%; } }
     .choices { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
     .choices label { border: 1px solid #ccc; border-radius: 6px; padding: 6px 12px; font-size: 14px; cursor: pointer; user-select: none; }
     .choices input { margin: 0 6px 0 0; }
@@ -198,6 +204,28 @@
       if (!url) return document.createTextNode(text);
       var a = el("a", null, text); a.href = url; a.target = "_blank"; a.rel = "noopener"; return a;
     }
+    function validHex(h) { return /^#[0-9a-f]{6}$/i.test(h || ""); }
+    function textOn(hex) {
+      var n = parseInt(hex.slice(1), 16);
+      var lum = 0.299 * (n >> 16 & 255) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255);
+      return lum > 160 ? "#212121" : "#ffffff";
+    }
+    function setGroupColor(item, color) { if (validHex(color)) item.style.setProperty("--gc", color); }
+    function groupChip(title, color) {
+      var g = el("div", "group", title);
+      if (validHex(color)) { g.style.background = color; g.style.color = textOn(color); }
+      return g;
+    }
+    function subTypeTab(label, color) {
+      if (!label) return null;
+      var t = el("div", "sot");
+      t.appendChild(el("span", null, "Sub-Order Type"));
+      t.appendChild(document.createTextNode(label));
+      var bg = validHex(color) ? color : "#c4c4c4";
+      t.style.background = bg; t.style.color = textOn(bg);
+      t.title = "Sub-Order Type: " + label;
+      return t;
+    }
 
     // ---------- Load ----------
     function load() {
@@ -264,9 +292,12 @@
       var box = $("parentBox");
       box.textContent = "";
       var item = el("div", "item parent");
-      var top = el("div", "item-top");
+      setGroupColor(item, p.groupColor);
+      var sot = subTypeTab(p.subType, p.subTypeColor);
+      if (sot) item.appendChild(sot);
+      var top = el("div", "item-top" + (sot ? " has-sot" : ""));
       var n = el("div", "item-name"); n.appendChild(link(p.name, p.url)); top.appendChild(n);
-      top.appendChild(el("div", "group", p.group));
+      top.appendChild(groupChip(p.group, p.groupColor));
       item.appendChild(top);
       item.appendChild(el("div", "soldto", (p.soldTo || "(no Sold-To)") + "  |  " + (p.city || "(no City, State)")));
       if (labels) renderValues(item, labels, p.values || []);
@@ -292,9 +323,12 @@
         var disabled = c.status !== "available";
         if (!disabled) avail++;
         var item = el("div", "item" + (disabled ? " disabled" : ""));
-        var top = el("div", "item-top");
+        setGroupColor(item, c.groupColor);
+        var sot = subTypeTab(c.subType, c.subTypeColor);
+        if (sot) item.appendChild(sot);
+        var top = el("div", "item-top" + (sot ? " has-sot" : ""));
         var n = el("div", "item-name"); n.appendChild(link(c.name, c.url)); top.appendChild(n);
-        if (c.group) top.appendChild(el("div", "group", c.group));
+        if (c.group) top.appendChild(groupChip(c.group, c.groupColor));
         top.appendChild(badgeFor(c));
         item.appendChild(top);
         if (c.soldTo !== undefined) {
