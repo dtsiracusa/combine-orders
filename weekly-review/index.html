@@ -466,7 +466,7 @@
       choices = {};
       collapsed = {};
       if (!res.items.length) {
-        setState("info", "\u2139", "Upcoming Week Review",
+        setState("info", "", "Upcoming Week Review",
           "There are no items in \u201c" + (res.groupTitle || "This Week (Locked)") + "\u201d right now.");
         return;
       }
@@ -672,7 +672,7 @@
         return;
       }
       var bad = res.results.filter(function (r) { return r.result !== "OK"; }).length;
-      setState(bad ? "info" : "success", bad ? "\u2139" : "\u2714", bad ? "Submitted With Notes" : "Done",
+      setState(bad ? "info" : "success", bad ? "" : "\u2714", bad ? "Submitted With Notes" : "Done",
         bad ? "Some items need attention. Details are below and in the log." : "All selected jobs were approved.");
       var box = $("results");
       box.textContent = "";
