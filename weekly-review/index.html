@@ -699,9 +699,12 @@
         setCollapsed(item, it.id, isCollapsed(it));
 
         // Choices or note
-        if (disabled) {
+        if (readOnly) {
+          // Last Week Review: view only, no choices
+        } else if (disabled) {
           item.appendChild(el("div", "note", it.note || "Already Approved."));
         } else {
+          /*
           var ch = el("div", "choices");
           ch.setAttribute("role", "radiogroup");
           ch.setAttribute("aria-label", "Review for " + it.name);
@@ -720,6 +723,25 @@
             ch.appendChild(lab);
           });
           refreshChoiceStyles(ch);
+          item.appendChild(ch);
+          */
+          var ch = el("div", "choices");
+          var tg = el("button", "approve-toggle", "Approve");
+          tg.type = "button";
+          tg.setAttribute("aria-label", "Approve " + it.name);
+          var on0 = choices[it.id] === "approve";
+          tg.classList.toggle("on-approve", on0);
+          tg.setAttribute("aria-pressed", on0 ? "true" : "false");
+          // Tap once to select Approve, tap again to clear it
+          tg.addEventListener("click", function () {
+            var on = choices[it.id] !== "approve";
+            if (on) choices[it.id] = "approve"; else delete choices[it.id];
+            tg.classList.toggle("on-approve", on);
+            tg.setAttribute("aria-pressed", on ? "true" : "false");
+            setCollapsed(item, it.id, on);   // collapse on Approve, expand when cleared
+            updateReviewBtn();
+          });
+          ch.appendChild(tg);
           item.appendChild(ch);
         }
         list.appendChild(item);
