@@ -426,6 +426,9 @@
     var choices = {};     // itemId -> "leave" | "approve"
     var collapsed = {};   // iteId -> true (collapsed) | false (expanded); set by caret or choice
     var busy = false;
+    var page = "last";      // "last" = Last Week Review, "upcoming" = Upcoming Week Review
+    var upRes = null;       // Upcoming load response received in the background
+    var upWaiting = false;  // true when Proceed was pressed before the Upcoming load finished
     var $ = function (id) { return document.getElementById(id); };
 
     // ---------- JSONP ----------
