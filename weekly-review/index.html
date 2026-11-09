@@ -263,7 +263,39 @@
     .modal-body ul { margin: 6px 0 12px; padding-left: 20px; }
     .modal-footer { padding: 14px 24px 18px; text-align: right; border-top: 1px solid #eee; }
     .modal-footer .btn { font-size: 15px; padding: 10px 22px; }
-    .hidden { display: none !important; }
+    .hidden {
+      display: none !important;
+    }
+    .tb-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    .page-nav {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    .approve-toggle {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #212121;
+      background: #fff;
+      cursor: pointer;
+      user-select: none;
+    }
+    .approve-toggle.on-approve {
+      background: #e8f5e9;
+      border-color: #2e7d32;
+    }
+    .approve-toggle:focus-visible {
+      outline: 3px solid #90caf9;
+      outline-offset: 2px;
+    }
     @media (max-width: 600px) {
       .vals {
         grid-template-columns: repeat(2, minmax(0, 1fr));
