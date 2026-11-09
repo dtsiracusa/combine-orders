@@ -526,6 +526,7 @@
       data = res;
       choices = {};
       collapsed = {};
+      showPage("upcoming");
       if (!res.items.length) {
         setState("info", "", "Upcoming Week Review",
           "There are no items in \u201c" + (res.groupTitle || "This Week (Locked)") + "\u201d right now.");
