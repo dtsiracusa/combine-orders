@@ -541,6 +541,66 @@
       updateReviewBtn();
     }
 
+    // ---------- Last Week Review / page switching ----------
+    function showPage(p) {
+      page = p;
+      var last = p === "last";
+      $("whoBox").classList.toggle("hidden", last);
+      $("approveAllBtn").classList.toggle("hidden", last);
+      $("proceedTop").classList.toggle("hidden", !last);
+      $("proceedBtn").classList.toggle("hidden", !last);
+      if (last) $("reviewBtn").classList.add("hidden");
+    }
+    function loadLast() {
+      if (APPS_SCRIPT_URL.indexOf("PASTE") === 0) {
+        setState("fail", "\u2718", "Not Configured", "APPS_SCRIPT_URL has not been set in this page.");
+        return;
+      }
+      page = "last";
+      spinner("Loading...", "Please wait while last week's items are loaded.");
+      $("review").classList.add("hidden");
+      $("results").classList.add("hidden");
+      $("reviewBtn").classList.add("hidden");
+      $("backBtn").classList.add("hidden");
+      $("proceedBtn").classList.add("hidden");
+      callApi("action=loadLast", LOAD_TIMEOUT_MS, onLoadLast);
+    }
+    function onLoadLast(res) {
+      if (page !== "last") return;   // Proceed was already pressed
+      if (!res.success) {
+        setState("fail", "\u2718", res.title || "Error", res.message || "");
+        $("backBtn").classList.remove("hidden");
+        $("proceedBtn").classList.remove("hidden");
+        return;
+      }
+      data = res;
+      choices = {};
+      collapsed = {};
+      showPage("last");
+      setState("ready", "&#128203;", "Last Week Review", res.items.length
+        ? "Jobs scheduled " + res.weekText + ". This page is view only. Select Proceed to review the upcoming week."
+        : "There were no jobs scheduled " + res.weekText + ".");
+      renderItems();
+      $("review").classList.remove("hidden");
+    }
+    // Loads the Upcoming items while the Last Week page is open
+    function prefetchUpcoming() {
+      upRes = null;
+      callApi("action=load", LOAD_TIMEOUT_MS, function (res) {
+        if (upWaiting) { upWaiting = false; onLoad(res); } else upRes = res;
+      });
+    }
+    function proceed() {
+      if (busy) return;
+      showPage("upcoming");
+      $("review").classList.add("hidden");
+      $("results").classList.add("hidden");
+      $("backBtn").classList.add("hidden");
+      window.scrollTo(0, 0);
+      if (upRes) { var r = upRes; upRes = null; onLoad(r); }
+      else { upWaiting = true; spinner("Loading...", "Please wait while this week's items are loaded."); }
+    }
+
     // ---------- Render ----------
     function renderItems() {
       var list = $("itemList");
