@@ -747,6 +747,7 @@
         list.appendChild(item);
       });
       updateCounts();
+      refreshToggle();
     }
 
     function refreshChoiceStyles(ch) {
@@ -758,6 +759,7 @@
             // Default: collapsed when already Approved on the board, or when Approve is selected.
             function isCollapsed(it) {
               if (Object.prototype.hasOwnProperty.call(collapsed, it.id)) return collapsed[it.id];
+              if (page === "last") return false; // Last Week Review: cards start expanded
               return !!it.approved || choices[it.id] === "approve";
             }
             function setCollapsed(item, id, on) {
@@ -769,6 +771,24 @@
                 c.setAttribute("aria-label", (on ? "Expand" : "Collapse") + " details");
                 c.title = on ? "Show details" : "Hide details";
               }
+              refreshToggle();
+            }
+            // ---------- Expand All / Collapse All (all cards, including greyed-out ones) ----------
+            function allCards() { return Array.prototype.slice.call($("itemList").querySelectorAll(".item")); }
+            function anyCollapsed(cards) {
+              return cards.some(function (c) { return !!collapsed[c.getAttribute("data-id")]; });
+            }
+            function refreshToggle() {
+              var b = $("toggleAllBtn"); if (!b) return;
+              var cards = allCards();
+              b.textContent = anyCollapsed(cards) ? "Expand All" : "Collapse All";
+              b.disabled = cards.length === 0;
+            }
+            function toggleAll() {
+              var cards = allCards();
+              var collapse = !anyCollapsed(cards);   // any collapsed -> expand all; none collapsed -> collapse all
+              cards.forEach(function (c) { setCollapsed(c, c.getAttribute("data-id"), collapse); });
+              refreshToggle();
             }
 
     function available() { return data.items.filter(function (it) { return !it.approved; }); }
