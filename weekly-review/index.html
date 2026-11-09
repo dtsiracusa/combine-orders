@@ -350,12 +350,19 @@
     <div class="card-body">
       <p class="message" id="message">Please wait while the items are loaded.</p>
       <div id="review" class="hidden">
+        <div class="page-nav hidden" id="proceedTop">
+          <button type="button" class="btn btn-small" id="proceedTopBtn">Proceed -&gt;</button>
+        </div>
         <div class="toolbar">
-          <div class="who">
+          <div class="who" id="whoBox">
             <label for="whoSelect">Confirmed by:</label>
             <select id="whoSelect"></select>
           </div>
-          <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
+          <!-- <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button> -->
+          <div class="tb-right">
+            <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
+            <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn" aria-controls="itemList">Collapse All</button>
+          </div>
         </div>
         <p class="counts" id="counts" aria-live="polite"></p>
         <div id="itemList"></div>
