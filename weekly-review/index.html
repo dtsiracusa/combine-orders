@@ -638,8 +638,15 @@
         headLeft.appendChild(caret);
         var left = el("div");
         var n = el("div", "item-name");
-        n.appendChild(link(it.name, it.srUrl || it.url));
-        n.title = it.srUrl ? "Open Service Request" : "Open in monday";
+        // n.appendChild(link(it.name, it.srUrl || it.url));
+        // n.title = it.srUrl ? "Open Service Request" : "Open in monday";
+        if (readOnly) {
+          n.appendChild(link(it.name, it.visitUrl));     // plain text when Tech Visit is blank
+          if (it.visitUrl) n.title = "Open Tech Visit";
+        } else {
+          n.appendChild(link(it.name, it.srUrl || it.url));
+          n.title = it.srUrl ? "Open Service Request" : "Open in monday";
+        }
         left.appendChild(n);
         left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
         left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
