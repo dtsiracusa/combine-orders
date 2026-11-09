@@ -693,6 +693,7 @@
 
         // Field grid in GRID_COLS order (Review Status and Service Request are not listed)
         var vals = el("div", "vals");
+        /*
         GRID_COLS.forEach(function (id) {
           var x = f[id]; if (!x) return;
           if (hideIfBlank(id, x)) return;
@@ -703,8 +704,26 @@
           else d.appendChild(document.createTextNode(dash(x.text)));
           vals.appendChild(d);
         });
+        */
+        var anyShown = false;
+        GRID_STACKS.forEach(function (stackIds) {
+          var s = el("div", "stack");
+          stackIds.forEach(function (id) {
+            var x = f[id]; if (!x) return;
+            if (hideIfBlank(id, x)) return;
+            var d = el("div");
+            d.appendChild(el("span", "label", x.title));
+            if (x.type === "link" && x.url) d.appendChild(link(x.text || x.url, x.url));
+            else if (x.type === "phone") d.appendChild(document.createTextNode(dash(fmtPhone(x.text))));
+            else d.appendChild(document.createTextNode(dash(x.text)));
+            s.appendChild(d);
+          });
+          if (s.childNodes.length) anyShown = true;
+          if (s.childNodes.length || KEEP_EMPTY_STACKS) vals.appendChild(s);
+        });
         // body.appendChild(vals);
-        if (vals.childNodes.length) body.appendChild(vals);
+        // if (vals.childNodes.length) body.appendChild(vals);
+        if (anyShown) body.appendChild(vals);
         
         // Notes (full width)
         NOTE_COLS.forEach(function (id) {
