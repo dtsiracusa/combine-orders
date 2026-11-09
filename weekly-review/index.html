@@ -683,11 +683,13 @@
           else d.appendChild(document.createTextNode(dash(x.text)));
           vals.appendChild(d);
         });
-        body.appendChild(vals);
-
+        // body.appendChild(vals);
+        if (vals.childNodes.length) body.appendChild(vals);
+        
         // Notes (full width)
         NOTE_COLS.forEach(function (id) {
           var x = f[id]; if (!x) return;
+          if (hideIfBlank(id, x)) return;
           var d = el("div", "notes");
           d.appendChild(el("span", "label", x.title));
           d.appendChild(document.createTextNode(dash(x.text)));
