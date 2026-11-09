@@ -796,15 +796,31 @@
 
     function updateCounts() {
       if (!data) return;
+      if (page === "last") {
+        $("counts").textContent = data.items.length + " job(s) scheduled " + data.weekText + ".";
+        return;
+      }
       $("counts").textContent = data.items.length + " item(s), " + available().length + " awaiting review, " +
         selected().length + " selected to approve.";
     }
     function updateReviewBtn() {
       $("reviewBtn").disabled = busy || selected().length === 0;
       $("approveAllBtn").disabled = busy || available().length === 0;
+      $("approveAllBtn").textContent = allPicked() ? "Clear All" : "Approve All";
       updateCounts();
     }
+    function allPicked() {
+      var a = available();
+      return a.length > 0 && a.every(function (it) { return choices[it.id] === "approve"; });
+    }
     function approveAll() {
+      if (allPicked()) {
+        // Clear All: remove every selection and expand those cards
+        available().forEach(function (it) { delete choices[it.id]; collapsed[it.id] = false; });
+        renderItems();
+        updateReviewBtn();
+        return;
+      }
       available().forEach(function (it) { choices[it.id] = "approve"; collapsed[it.id] = true; });
       renderItems();
       updateReviewBtn();
@@ -873,11 +889,17 @@
       $("reviewBtn").addEventListener("click", openConfirm);
       $("cancelBtn").addEventListener("click", closeConfirm);
       $("submitBtn").addEventListener("click", submit);
-      $("backBtn").addEventListener("click", load);
+      // $("backBtn").addEventListener("click", load);
+      $("backBtn").addEventListener("click", function () { if (page === "last") loadLast(); else load(); });
+      $("toggleAllBtn").addEventListener("click", toggleAll);
+      $("proceedTopBtn").addEventListener("click", proceed);
+      $("proceedBtn").addEventListener("click", proceed);
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape" && $("confirmModal").classList.contains("open")) closeConfirm();
       });
-      load();
+      //load();
+      loadLast();
+      prefetchUpcoming();
     })();
   </script>
 </body>
