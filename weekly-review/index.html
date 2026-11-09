@@ -408,6 +408,18 @@
       "multiple_person_mm1jx2c0", "phone_mm2esv7g", "phone_mm6dsdnq", "phone_mm2cz2nr"
     ];
     var NOTE_COLS = ["text_mkzvy6d3", "long_text_mm2cz7x7", "long_text_mm1tfndn"];
+    // Grid and note fields in this list are hidden when blank. A grid with no visible fields is not drawn.
+    var HIDE_FIELD_IF_BLANK = [
+      "text_mm6bsqmj",      // On-Site Contact Name
+      "text_mm6dtr7m",      // Backup On-Site Contact Name
+      "text_mm2d9dby",      // Scheduling Contact Name
+      "phone_mm2esv7g",     // On-Site Contact Phone #
+      "phone_mm6dsdnq",     // Backup On-Site Contact Phone #
+      "phone_mm2cz2nr",     // Scheduling Contact Phone #
+      "text_mkzvy6d3",      // Additional Notes for Techs
+      "long_text_mm2cz7x7", // Top Notes
+      "long_text_mm1tfndn"  // Mid-Notes
+    ];
     var HEADER_COLS = [COLOR_COL, SOLD_TO_COL, CITY_COL];
 
     var data = null;      // last load response
