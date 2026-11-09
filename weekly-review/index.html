@@ -607,8 +607,11 @@
       list.textContent = "";
       data.items.forEach(function (it) {
         var f = fieldMap(it);
-        var disabled = !!it.approved;
+        // var disabled = !!it.approved;
+        var readOnly = page === "last";                // Last Week Review: no choices, never greyed out
+        var disabled = !readOnly && !!it.approved;
         var item = el("div", "item" + (disabled ? " disabled" : ""));
+        item.setAttribute("data-id", it.id);
         if (validHex(it.colorStatusColor)) item.style.setProperty("--gc", it.colorStatusColor);
 
         // Top-right: Review Status tab
