@@ -675,6 +675,7 @@
         var vals = el("div", "vals");
         GRID_COLS.forEach(function (id) {
           var x = f[id]; if (!x) return;
+          if (hideIfBlank(id, x)) return;
           var d = el("div");
           d.appendChild(el("span", "label", x.title));
           if (x.type === "link" && x.url) d.appendChild(link(x.text || x.url, x.url));
