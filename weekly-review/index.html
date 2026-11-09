@@ -491,6 +491,9 @@
       return m;
     }
     function dash(t) { return (t && String(t).trim()) ? t : "-"; }
+    function hideIfBlank(id, x) {
+      return HIDE_FIELD_IF_BLANK.indexOf(id) !== -1 && !String((x && x.text) || "").trim();
+    }
     // "2169785423" or "12169785423" -> "+1(216)978-5423"; anything else is returned unchanged
     function fmtPhone(t) {
       var raw = String(t || "").trim();
