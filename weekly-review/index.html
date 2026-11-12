@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'
   fill='none'
@@ -36,6 +37,7 @@
       min-height: 100vh;
       box-sizing: border-box;
     }
+
     .card {
       background: #fff;
       border-radius: 12px;
@@ -44,22 +46,82 @@
       width: 94%;
       overflow: hidden;
     }
-    .card-header { padding: 28px 24px 16px; text-align: center; }
-    .icon { font-size: 40px; }
-    .card-header h1 { margin: 8px 0 0; font-size: 22px; color: #212121; }
-    .logo { width: 100%; max-width: 160px; height: auto; margin-bottom: 8px; }
-    .card-body { padding: 20px 24px; color: #555; font-size: 15px; line-height: 1.5; }
-    .card-footer { padding: 16px 24px 24px; text-align: center; border-top: 1px solid #eee; }
-    .ready .card-header, .loading .card-header, .info .card-header { background: #e3f2fd; }
-    .ready .icon, .loading .icon, .info .icon { color: #1565c0; }
-    
-    .loading .card-header svg { display: none; }  
-    
-    .success .card-header { background: #e8f5e9; }
-    .success .icon { color: #2e7d32; }
-    .fail .card-header { background: #fce4ec; }
-    .fail .icon { color: #c62828; }
-    .message { font-size: 17px; text-align: center; margin: 0 0 8px; white-space: pre-line; }
+
+    .card-header {
+      padding: 28px 24px 16px;
+      text-align: center;
+      position: relative; /* anchors the tech page menu */
+    }
+
+    .icon {
+      font-size: 40px;
+    }
+
+    .card-header h1 {
+      margin: 8px 0 0;
+      font-size: 22px;
+      color: #212121;
+    }
+
+    .logo {
+      width: 100%;
+      max-width: 160px;
+      height: auto;
+      margin-bottom: 8px;
+    }
+
+    .card-body {
+      padding: 20px 24px;
+      color: #555;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .card-footer {
+      padding: 16px 24px 24px;
+      text-align: center;
+      border-top: 1px solid #eee;
+    }
+
+    .ready .card-header,
+    .loading .card-header,
+    .info .card-header {
+      background: #e3f2fd;
+    }
+
+    .ready .icon,
+    .loading .icon,
+    .info .icon {
+      color: #1565c0;
+    }
+
+    .loading .card-header svg {
+      display: none;
+    }
+
+    .success .card-header {
+      background: #e8f5e9;
+    }
+
+    .success .icon {
+      color: #2e7d32;
+    }
+
+    .fail .card-header {
+      background: #fce4ec;
+    }
+
+    .fail .icon {
+      color: #c62828;
+    }
+
+    .message {
+      font-size: 17px;
+      text-align: center;
+      margin: 0 0 8px;
+      white-space: pre-line;
+    }
+
     .btn {
       display: inline-block;
       padding: 12px 28px;
@@ -71,15 +133,40 @@
       cursor: pointer;
       font-family: inherit;
     }
-    .btn:hover { opacity: 0.85; }
-    .btn:disabled { opacity: 0.45; cursor: default; }
-    .btn:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+
+    .btn:hover {
+      opacity: 0.85;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .btn:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
       outline: 3px solid #90caf9;
       outline-offset: 2px;
     }
-    .btn-secondary { background: #9e9e9e; margin-right: 8px; }
-    .btn-small { padding: 6px 14px; font-size: 14px; }
-    .btn-outline { background: #fff; color: #1565c0; border: 1px solid #1565c0; }
+
+    .btn-secondary {
+      background: #9e9e9e;
+      margin-right: 8px;
+    }
+
+    .btn-small {
+      padding: 6px 14px;
+      font-size: 14px;
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: #1565c0;
+      border: 1px solid #1565c0;
+    }
+
     .spinner {
       display: inline-block;
       width: 40px;
@@ -89,7 +176,13 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     .toolbar {
       display: flex;
       align-items: center;
@@ -98,8 +191,18 @@
       flex-wrap: wrap;
       margin-bottom: 4px;
     }
-    .who { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .who label { font-size: 14px; }
+
+    .who {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .who label {
+      font-size: 14px;
+    }
+
     .who select {
       padding: 6px 10px;
       font-size: 15px;
@@ -107,7 +210,13 @@
       border-radius: 5px;
       font-family: inherit;
     }
-    .counts { font-size: 14px; color: #555; margin: 8px 0 12px; }
+
+    .counts {
+      font-size: 14px;
+      color: #555;
+      margin: 8px 0 12px;
+    }
+
     .item {
       border: 1px solid #e0e0e0;
       border-left: 6px solid var(--gc, #e0e0e0);
@@ -116,21 +225,32 @@
       margin-bottom: 12px;
       position: relative;
     }
-    .item.disabled { background: #fafafa; color: #9e9e9e; }
-    .item.disabled .cs-tab, .item.disabled .chip { opacity: .55; }
+
+    .item.disabled {
+      background: #fafafa;
+      color: #9e9e9e;
+    }
+
+    .item.disabled .cs-tab,
+    .item.disabled .chip {
+      opacity: .55;
+    }
+
     .cs-tab {
-      position: absolute;
-      top: 0;
-      right: 0;
+      /* position: absolute; */
+      /* top: 0; */
+      /* right: 0; */
       max-width: 200px;
+      min-width: 0;
       padding: 4px 12px;
-      border-radius: 0 7px 0 10px;
+      /* border-radius: 0 7px 0 10px; */
       font-size: 12px;
       font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .cs-tab span {
       display: block;
       font-size: 9px;
@@ -138,6 +258,7 @@
       letter-spacing: .04em;
       opacity: .85;
     }
+
     .item-head {
       display: flex;
       justify-content: space-between;
@@ -146,9 +267,21 @@
       flex-wrap: wrap;
       padding-right: 120px;
     }
-    .soldto { font-size: 16px; font-weight: 600; color: #212121; }
-    .item.disabled .soldto { color: #9e9e9e; }
-    .city { font-size: 14px; }
+
+    .soldto {
+      font-size: 16px;
+      font-weight: 600;
+      color: #212121;
+    }
+
+    .item.disabled .soldto {
+      color: #9e9e9e;
+    }
+
+    .city {
+      font-size: 14px;
+    }
+
     .item-name {
       font-size: 17px;
       font-weight: 600;
@@ -156,9 +289,21 @@
       text-align: left;
       margin-left: 0;
     }
-    .item.disabled .item-name { color: #9e9e9e; }
-    .item-name a { color: inherit; }
-    .head-left { display: flex; align-items: flex-start; gap: 8px; }
+
+    .item.disabled .item-name {
+      color: #9e9e9e;
+    }
+
+    .item-name a {
+      color: inherit;
+    }
+
+    .head-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
     .caret {
       flex: 0 0 auto;
       width: 28px;
@@ -174,22 +319,38 @@
       cursor: pointer;
       transition: transform .15s ease;
     }
-    .caret:hover { background: #eeeeee; }
-    .caret:focus-visible { outline: 3px solid #90caf9; outline-offset: 2px; }
-    .item.collapsed .caret { transform: rotate(-90deg); }
-    .item.collapsed .item-body { display: none; }
+
+    .caret:hover {
+      background: #eeeeee;
+    }
+
+    .caret:focus-visible {
+      outline: 3px solid #90caf9;
+      outline-offset: 2px;
+    }
+
+    .item.collapsed .caret {
+      transform: rotate(-90deg);
+    }
+
+    .item.collapsed .item-body {
+      display: none;
+    }
+
     .label {
       color: #9e9e9e;
       display: block;
       font-size: 11px;
       text-transform: uppercase;
     }
+
     .chips {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 6px 12px;
       margin-top: 10px;
     }
+
     .chip {
       display: inline-block;
       font-size: 12px;
@@ -199,6 +360,7 @@
       background: #c4c4c4;
       color: #212121;
     }
+
     .vals {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -206,18 +368,33 @@
       font-size: 13px;
       margin-top: 10px;
     }
-      .vals a {
-        color: #1565c0;
-        word-break: break-all;
-      }
-      .stack {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        min-width: 0;
-      }
-    .notes { font-size: 13px; margin-top: 10px; white-space: pre-wrap; word-break: break-word; }
-    .choices { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
+    .vals a {
+      color: #1565c0;
+      word-break: break-all;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .notes {
+      font-size: 13px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .choices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
     .choices label {
       border: 1px solid #ccc;
       border-radius: 6px;
@@ -226,10 +403,26 @@
       cursor: pointer;
       user-select: none;
     }
-    .choices input { margin: 0 6px 0 0; }
-    .choices label.on-approve { background: #e8f5e9; border-color: #2e7d32; }
-    .note { font-size: 13px; margin-top: 10px; color: #616161; }
-    .note.warn { color: #ad1457; }
+
+    .choices input {
+      margin: 0 6px 0 0;
+    }
+
+    .choices label.on-approve {
+      background: #e8f5e9;
+      border-color: #2e7d32;
+    }
+
+    .note {
+      font-size: 13px;
+      margin-top: 10px;
+      color: #616161;
+    }
+
+    .note.warn {
+      color: #ad1457;
+    }
+
     .result-row {
       border-left: 4px solid #9e9e9e;
       padding: 8px 12px;
@@ -238,10 +431,23 @@
       border-radius: 4px;
       font-size: 14px;
     }
-    .result-row.ok { border-color: #2e7d32; }
-    .result-row.partial { border-color: #ef6c00; }
-    .result-row.failed { border-color: #c62828; }
-    .result-row.skipped { border-color: #9e9e9e; }
+
+    .result-row.ok {
+      border-color: #2e7d32;
+    }
+
+    .result-row.partial {
+      border-color: #ef6c00;
+    }
+
+    .result-row.failed {
+      border-color: #c62828;
+    }
+
+    .result-row.skipped {
+      border-color: #9e9e9e;
+    }
+
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -252,7 +458,11 @@
       overflow-y: auto;
       z-index: 1000;
     }
-    .modal-overlay.open { display: flex; }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
     .modal {
       background: #fff;
       border-radius: 12px;
@@ -261,6 +471,7 @@
       margin: 32px auto;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
     }
+
     .modal h2 {
       margin: 0;
       padding: 18px 24px;
@@ -268,13 +479,34 @@
       color: #212121;
       border-bottom: 1px solid #eee;
     }
-    .modal-body { padding: 16px 24px; font-size: 14px; color: #444; line-height: 1.5; }
-    .modal-body ul { margin: 6px 0 12px; padding-left: 20px; }
-    .modal-footer { padding: 14px 24px 18px; text-align: right; border-top: 1px solid #eee; }
-    .modal-footer .btn { font-size: 15px; padding: 10px 22px; }
+
+    .modal-body {
+      padding: 16px 24px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.5;
+    }
+
+    .modal-body ul {
+      margin: 6px 0 12px;
+      padding-left: 20px;
+    }
+
+    .modal-footer {
+      padding: 14px 24px 18px;
+      text-align: right;
+      border-top: 1px solid #eee;
+    }
+
+    .modal-footer .btn {
+      font-size: 15px;
+      padding: 10px 22px;
+    }
+
     .hidden {
       display: none !important;
     }
+
     .tb-right {
       display: flex;
       align-items: center;
@@ -282,10 +514,12 @@
       flex-wrap: wrap;
       margin-left: auto;
     }
+
     .page-nav {
       text-align: right;
       margin-bottom: 10px;
     }
+
     .approve-toggle {
       border: 1px solid #ccc;
       border-radius: 6px;
@@ -297,36 +531,146 @@
       cursor: pointer;
       user-select: none;
     }
+
     .approve-toggle.on-approve {
       background: #e8f5e9;
       border-color: #2e7d32;
     }
+
     .approve-toggle:focus-visible {
       outline: 3px solid #90caf9;
       outline-offset: 2px;
     }
+
+    /* Top-right tab row: Order Status (Last Week only) + Review Status, side by side */
+    .tabs {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      border-radius: 0 7px 0 10px;
+      overflow: hidden;
+    }
+
+    .item.two-tabs .item-head {
+      padding-right: 250px;
+    }
+
+    /* Last Week / This Week toggle */
+    .page-nav .btn,
+    .nav-foot .btn {
+      margin: 4px;
+    }
+
+    .nav-foot {
+      display: inline-block;
+    }
+
+    /* Tech page menu (top-right of the blue card header) */
+    .tech-menu {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      text-align: left;
+      z-index: 10;
+    }
+
+    .menu-btn {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: 1px solid #1565c0;
+      border-radius: 6px;
+      background: #fff;
+      color: #1565c0;
+      font-size: 20px;
+      line-height: 36px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .menu-btn:hover {
+      background: #e3f2fd;
+    }
+
+    .menu-btn:focus-visible,
+    .menu-list a:focus-visible {
+      outline: 3px solid #90caf9;
+      outline-offset: 2px;
+    }
+
+    .menu-list {
+      position: absolute;
+      top: 44px;
+      right: 0;
+      min-width: 200px;
+      padding: 4px 0;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .menu-head {
+      padding: 6px 14px 4px;
+      font-size: 11px;
+      color: #9e9e9e;
+      text-transform: uppercase;
+    }
+
+    .menu-list a {
+      display: block;
+      padding: 8px 14px;
+      font-size: 14px;
+      color: #212121;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .menu-list a:hover {
+      background: #e3f2fd;
+    }
+
     @media (max-width: 600px) {
       .vals {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
+
     @media (max-width: 480px) {
       .item {
         padding-top: 36px;
       }
+
+      .item-head,
+      .item.two-tabs .item-head {
+        padding-right: 0;
+      }
+
       .item-head {
         padding-right: 0;
       }
+
       .cs-tab {
         max-width: 80%;
       }
-      .item-name { text-align: left; margin-left: 0; }
+
+      .item-name {
+        text-align: left;
+        margin-left: 0;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="card loading" id="card">
     <div class="card-header">
+      <div class="tech-menu hidden" id="techMenu">
+        <button type="button" class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false"
+          aria-controls="menuList" aria-label="Tech pages" title="Tech pages">&#9776;</button>
+        <div class="menu-list hidden" id="menuList" role="menu" aria-label="Tech pages"></div>
+      </div>
       <div class="icon" id="icon">
         <div class="spinner"></div>
       </div>
@@ -335,8 +679,13 @@
     <div class="card-body">
       <p class="message" id="message">Please wait while the items are loaded.</p>
       <div id="review" class="hidden">
-        <div class="page-nav hidden" id="proceedTop">
-          <button type="button" class="btn btn-small" id="proceedTopBtn">Proceed -&gt;</button>
+        <!-- <div class="page-nav hidden" id="proceedTop">
+                  <button type="button" class="btn btn-small" id="proceedTopBtn">Proceed -&gt;</button>
+                </div> -->
+        <div class="page-nav" id="navTop">
+          <button type="button" class="btn btn-small" id="navLastTop">&lt;- Last Week</button>
+          <button type="button" class="btn btn-small" id="navThisTop">This Week -&gt;</button> 
+        </div>
         </div>
         <div class="toolbar">
           <div class="who" id="whoBox">
@@ -346,7 +695,8 @@
           <!-- <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button> -->
           <div class="tb-right">
             <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
-            <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn" aria-controls="itemList">Collapse All</button>
+            <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn" aria-controls="itemList">Collapse
+              All</button>
           </div>
         </div>
         <p class="counts" id="counts" aria-live="polite"></p>
@@ -357,7 +707,11 @@
     <div class="card-footer" id="footer">
       <button type="button" class="btn hidden" id="reviewBtn" disabled>Review &amp; Confirm</button>
       <button type="button" class="btn hidden" id="backBtn">Back to Items</button>
-      <button type="button" class="btn hidden" id="proceedBtn">Proceed -&gt;</button>
+      <!-- <button type="button" class="btn hidden" id="proceedBtn">Proceed -&gt;</button> -->
+      <span class="nav-foot" id="navFoot">
+        <!-- <button type="button" class="btn" id="navLast">&lt;- Last Week</button> -->
+        <!-- <button type="button" class="btn" id="navThis">This Week -&gt;</button> -->
+      </span>
     </div>
   </div>
 
@@ -376,13 +730,25 @@
     // UPDATE THIS to the Upcoming Week Review Apps Script deployment URL (/exec).
     var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzL7g4h_t1H7Ki6igol5MU4QAOK3T5DLIy0cBW3joQssNC81WzZekPp2cY_tGbBEJfQ/exec";
     // People who can be selected as the confirmer. The first entry is the default.
-    var CONFIRMERS = ["Joshua McCann", "Dante Siracusa"];
+    var CONFIRMERS = ["Joshua McCann"];
+    // Tech pages in the top-right menu (from tech_links.json). Each opens in a new tab.
+    var TECH_LINKS = [
+      { name: "Andrew Stump", link: "https://dtsiracusa.github.io/tech-review/?k=f7a5dec6e564f46a" },
+      { name: "Michael Koepke", link: "https://dtsiracusa.github.io/tech-review/?k=b525ef723e76cca2" },
+      { name: "Kyle Ruffer", link: "https://dtsiracusa.github.io/tech-review/?k=f932b83881bfc699" },
+      { name: "Tom Zwiebel", link: "https://dtsiracusa.github.io/tech-review/?k=5d32e2bca8f9b50e" },
+      { name: "Justin Hogrefe", link: "https://dtsiracusa.github.io/tech-review/?k=05557c3f4f8379bb" },
+      { name: "Michael Grotemat", link: "https://dtsiracusa.github.io/tech-review/?k=ce6e8d717dd4fec9" }
+    ];
     var LOAD_TIMEOUT_MS = 60000;
     var SUBMIT_TIMEOUT_MS = 180000;
 
     // Column placement on the card (IDs from upcoming_week_columns.json)
     var COLOR_COL = "color_mkzwg28s";          // left border
     var REVIEW_COL = "color_mm4eb90g";         // top-right tab
+    var ORDER_COL = "color_mm2nbg4w";          // top-right tab, left of Review Status (Last Week Review only)
+    var ORDER_DEFAULT = "Open";                // shown when Order Status is blank
+    var ORDER_DEFAULT_COLOR = "";              // optional hex for blank Order Status, e.g. "#579bfc"; "" = use the color monday returns for "Open"
     var TECH_APPROVED_COL = "color_mm8dp78e";
     var SOLD_TO_COL = "text_mm1b4w1t";         // header left
     var CITY_COL = "text_mm1dy2mz";            // header left
@@ -399,7 +765,7 @@
       ["text_mm2d9dby", "phone_mm2cz2nr"],             // Scheduling Contact Name over Phone #
       ["text_mm6bsqmj", "phone_mm2esv7g"],             // On-Site Contact Name over Phone #
       ["text_mm6dtr7m", "phone_mm6dsdnq"]              // Backup On-Site Contact Name over Phone #
-      
+
     ];
     // true  = a stack with all fields hidden keeps its empty column (stacks never shift sideways)
     // false = a stack with all fields hidden is removed (stacks to the right shift left)
@@ -424,8 +790,11 @@
     var collapsed = {};   // iteId -> true (collapsed) | false (expanded); set by caret or choice
     var busy = false;
     var page = "last";      // "last" = Last Week Review, "upcoming" = Upcoming Week Review
-    var upRes = null;       // Upcoming load response received in the background
-    var upWaiting = false;  // true when Proceed was pressed before the Upcoming load finished
+    // var upRes = null;       // Upcoming load response received in the background
+    // var upWaiting = false;  // true when Proceed was pressed before the Upcoming load finished
+    var lastData = null, upData = null;          // cached load response for each page
+    var lastCollapsed = {}, upCollapsed = {};    // collapse states for each page ("collapsed" points to one of these)
+    var lastLoading = false, upLoading = false;  // true while that page's request is in progress
     var $ = function (id) { return document.getElementById(id); };
 
     // ---------- JSONP ----------
@@ -463,9 +832,35 @@
       $("title").textContent = title;
       $("message").textContent = message || "";
       $("message").classList.toggle("hidden", !message);
-      document.title = title + " — Wieland Healthcare";
-    }
-    function spinner(title, msg) { setState("loading", '<div class="spinner"></div>', title, msg); }
+        document.title = title + " — Wieland Healthcare";
+        closeMenu();
+        $("techMenu").classList.add("hidden");   // shown again only when cards are on screen
+      }
+      function spinner(title, msg) { setState("loading", '<div class="spinner"></div>', title, msg); }
+
+      // ---------- Tech page menu ----------
+      function buildMenu() {
+        var list = $("menuList");
+        list.appendChild(el("div", "menu-head", "Tech pages"));
+        TECH_LINKS.forEach(function (t) {
+          var a = el("a", null, t.name);
+          a.href = t.link; a.target = "_blank"; a.rel = "noopener";
+          a.setAttribute("role", "menuitem");
+          a.addEventListener("click", closeMenu);
+          list.appendChild(a);
+        });
+      }
+      function openMenu() {
+        $("menuList").classList.remove("hidden");
+        $("menuBtn").setAttribute("aria-expanded", "true");
+        var first = $("menuList").querySelector("a");
+        if (first) first.focus();
+      }
+      function closeMenu() {
+        $("menuList").classList.add("hidden");
+        $("menuBtn").setAttribute("aria-expanded", "false");
+      }
+      function showMenu() { $("techMenu").classList.toggle("hidden", !TECH_LINKS.length); }
     function el(tag, cls, text) {
       var e = document.createElement(tag);
       if (cls) e.className = cls;
@@ -500,6 +895,7 @@
       return "+1(" + d.slice(0, 3) + ")" + d.slice(3, 6) + "-" + d.slice(6);
     }
 
+    /* ---------- Previous Load / Last Week / Proceed logic (replaced by the section below) ----------
     // ---------- Load ----------
     function load() {
       if (APPS_SCRIPT_URL.indexOf("PASTE") === 0) {
@@ -598,10 +994,145 @@
       else { upWaiting = true; spinner("Loading...", "Please wait while this week's items are loaded."); }
     }
 
+    */
+
+    // ---------- Load / page switching ----------
+    // Each page keeps its last response, Approve choices, and collapse states.
+    // Switching pages reuses them; only Back to Items (or a failed load) requests new data.
+    function notConfigured() {
+      if (APPS_SCRIPT_URL.indexOf("PASTE") !== 0) return false;
+      setState("fail", "\u2718", "Not Configured", "APPS_SCRIPT_URL has not been set in this page.");
+      return true;
+    }
+    function showLoading(msg) {
+      spinner("Loading...", msg);
+      $("review").classList.add("hidden");
+      $("results").classList.add("hidden");
+      $("reviewBtn").classList.add("hidden");
+      $("backBtn").classList.add("hidden");
+    }
+    function showFail(res) {
+      setState("fail", "\u2718", res.title || "Error", res.message || "");
+      $("review").classList.add("hidden");
+      $("backBtn").classList.remove("hidden");
+    }
+
+    // Upcoming Week Review
+    function load() {
+      if (notConfigured()) return;
+      upData = null;
+      upLoading = true;
+      if (page === "upcoming") showLoading("Please wait while this week's items are loaded.");
+      callApi("action=load", LOAD_TIMEOUT_MS, onLoad);
+    }
+    function onLoad(res) {
+      upLoading = false;
+      if (!res.success) {
+        if (page === "upcoming") showFail(res);   // on Last Week: try again when This Week is selected
+        return;
+      }
+      upData = res;
+      choices = {};
+      upCollapsed = {};
+      if (page === "upcoming") renderUpcoming();
+    }
+    function renderUpcoming() {
+      data = upData;
+      collapsed = upCollapsed;
+      showPage("upcoming");
+      $("results").classList.add("hidden");
+      $("backBtn").classList.add("hidden");
+      if (!data.items.length) {
+        setState("info", "", "Upcoming Week Review",
+          "There are no items in \u201c" + (data.groupTitle || "This Week (Locked)") + "\u201d right now.");
+        $("review").classList.add("hidden");
+        $("reviewBtn").classList.add("hidden");
+        return;
+      }
+      setState("ready", "&#128203;", "Upcoming Week Review",
+        "Review each job in \u201c" + data.groupTitle + "\u201d. Choose Approve for jobs that are ready, " +
+        "then select Review & Confirm. Approved jobs have their Review Status set to Approved.");
+      renderItems();
+      $("review").classList.remove("hidden");
+      $("reviewBtn").classList.remove("hidden");
+      updateReviewBtn();
+      showMenu();
+    }
+
+    // Last Week Review
+    function loadLast() {
+      if (notConfigured()) return;
+      lastData = null;
+      lastLoading = true;
+      if (page === "last") showLoading("Please wait while last week's items are loaded.");
+      callApi("action=loadLast", LOAD_TIMEOUT_MS, onLoadLast);
+    }
+    function onLoadLast(res) {
+      lastLoading = false;
+      if (!res.success) {
+        if (page === "last") showFail(res);       // on This Week: try again when Last Week is selected
+        return;
+      }
+      lastData = res;
+      lastCollapsed = {};
+      if (page === "last") renderLast();
+    }
+    function renderLast() {
+      data = lastData;
+      collapsed = lastCollapsed;
+      showPage("last");
+      $("results").classList.add("hidden");
+      $("backBtn").classList.add("hidden");
+      setState("ready", "&#128203;", "Last Week Review", data.items.length
+        ? "Jobs scheduled " + data.weekText + ". This page is view only. Select This Week to review the upcoming week."
+        : "There were no jobs scheduled " + data.weekText + ".");
+      renderItems();
+      $("review").classList.remove("hidden");
+      if (data.items.length) showMenu();
+    }
+
+    function showPage(p) {
+      page = p;
+      var last = p === "last";
+      $("whoBox").classList.toggle("hidden", last);
+      $("approveAllBtn").classList.toggle("hidden", last);
+      if (last) $("reviewBtn").classList.add("hidden");
+      setNav();
+    }
+    // Both toggles are always shown; the button for the page on screen is disabled. Hidden while submitting.
+    function setNav() {
+      var last = page === "last";
+      ["navLastTop"].forEach(function (id) {
+        $(id).disabled = busy || last;
+        if (last) $(id).setAttribute("aria-current", "page"); else $(id).removeAttribute("aria-current");
+      });
+      ["navThisTop"].forEach(function (id) {
+        $(id).disabled = busy || !last;
+        if (!last) $(id).setAttribute("aria-current", "page"); else $(id).removeAttribute("aria-current");
+      });
+      $("navFoot").classList.toggle("hidden", busy);
+    }
+    function goTo(p) {
+      if (busy) return;
+      showPage(p);
+      window.scrollTo(0, 0);
+      if (p === "last") {
+        if (lastData) renderLast();
+        else if (lastLoading) showLoading("Please wait while last week's items are loaded.");
+        else loadLast();
+      } else {
+        if (upData) renderUpcoming();
+        else if (upLoading) showLoading("Please wait while this week's items are loaded.");
+        else load();
+      }
+    }
+    
+
     // ---------- Render ----------
     function renderItems() {
       var list = $("itemList");
       list.textContent = "";
+      var osDefaultBg = page === "last" ? orderDefaultColor() : "";
       data.items.forEach(function (it) {
         var f = fieldMap(it);
         // var disabled = !!it.approved;
@@ -611,8 +1142,24 @@
         item.setAttribute("data-id", it.id);
         if (validHex(it.colorStatusColor)) item.style.setProperty("--gc", it.colorStatusColor);
 
+        // Top-right: Order Status tab (Last Week Review only) and Review Status tab, side by side
+        var tabs = el("div", "tabs");
+        if (readOnly) {
+          var os = f[ORDER_COL] || {};
+          var osText = os.text || ORDER_DEFAULT;
+          var osTab = el("div", "cs-tab");
+          osTab.appendChild(el("span", null, os.title || "Order Status"));
+          osTab.appendChild(document.createTextNode(osText));
+          var osBg = (os.text && validHex(os.color)) ? os.color : osDefaultBg;
+          osTab.style.background = osBg; osTab.style.color = textOn(osBg);
+          osTab.title = "Order Status: " + osText;
+          tabs.appendChild(osTab);
+          item.classList.add("two-tabs");
+        }
+
         // Top-right: Review Status tab
         var rv = f[REVIEW_COL] || {};
+
         var rvText = rv.text || "Not Yet";
         var tab = el("div", "cs-tab");
         tab.appendChild(el("span", null, "Review Status"));
@@ -620,7 +1167,9 @@
         var bg = (rv.text && validHex(rv.color)) ? rv.color : "#c4c4c4";
         tab.style.background = bg; tab.style.color = textOn(bg);
         tab.title = "Review Status: " + rvText;
-        item.appendChild(tab);
+        // item.appendChild(tab);
+        tabs.appendChild(tab);
+        item.appendChild(tabs);
 
         // Header (left): caret, item name, Sold To, City
         var head = el("div", "item-head");
@@ -701,7 +1250,7 @@
         // body.appendChild(vals);
         // if (vals.childNodes.length) body.appendChild(vals);
         if (anyShown) body.appendChild(vals);
-        
+
         // Notes (full width)
         NOTE_COLS.forEach(function (id) {
           var x = f[id]; if (!x) return;
@@ -766,46 +1315,56 @@
       refreshToggle();
     }
 
+    // Color for a blank Order Status: ORDER_DEFAULT_COLOR if set, else the color monday returned for "Open" on any loaded item
+    function orderDefaultColor() {
+      if (validHex(ORDER_DEFAULT_COLOR)) return ORDER_DEFAULT_COLOR;
+      for (var i = 0; i < data.items.length; i++) {
+        var x = fieldMap(data.items[i])[ORDER_COL];
+        if (x && x.text === ORDER_DEFAULT && validHex(x.color)) return x.color;
+      }
+      return "#c4c4c4";
+    }
     function refreshChoiceStyles(ch) {
+
       Array.prototype.forEach.call(ch.querySelectorAll("label"), function (lab) {
         var r = lab.querySelector("input");
         lab.className = r.checked && r.value === "approve" ? "on-approve" : "";
       });
-            }
-            // Default: collapsed when already Approved on the board, or when Approve is selected.
-            function isCollapsed(it) {
-              if (Object.prototype.hasOwnProperty.call(collapsed, it.id)) return collapsed[it.id];
-              if (page === "last") return false; // Last Week Review: cards start expanded
-              return !!it.approved || choices[it.id] === "approve";
-            }
-            function setCollapsed(item, id, on) {
-              collapsed[id] = on;
-              item.classList.toggle("collapsed", on);
-              var c = item.querySelector(".caret");
-              if (c) {
-                c.setAttribute("aria-expanded", on ? "false" : "true");
-                c.setAttribute("aria-label", (on ? "Expand" : "Collapse") + " details");
-                c.title = on ? "Show details" : "Hide details";
-              }
-              refreshToggle();
-            }
-            // ---------- Expand All / Collapse All (all cards, including greyed-out ones) ----------
-            function allCards() { return Array.prototype.slice.call($("itemList").querySelectorAll(".item")); }
-            function anyCollapsed(cards) {
-              return cards.some(function (c) { return !!collapsed[c.getAttribute("data-id")]; });
-            }
-            function refreshToggle() {
-              var b = $("toggleAllBtn"); if (!b) return;
-              var cards = allCards();
-              b.textContent = anyCollapsed(cards) ? "Expand All" : "Collapse All";
-              b.disabled = cards.length === 0;
-            }
-            function toggleAll() {
-              var cards = allCards();
-              var collapse = !anyCollapsed(cards);   // any collapsed -> expand all; none collapsed -> collapse all
-              cards.forEach(function (c) { setCollapsed(c, c.getAttribute("data-id"), collapse); });
-              refreshToggle();
-            }
+    }
+    // Default: collapsed when already Approved on the board, or when Approve is selected.
+    function isCollapsed(it) {
+      if (Object.prototype.hasOwnProperty.call(collapsed, it.id)) return collapsed[it.id];
+      if (page === "last") return false; // Last Week Review: cards start expanded
+      return !!it.approved || choices[it.id] === "approve";
+    }
+    function setCollapsed(item, id, on) {
+      collapsed[id] = on;
+      item.classList.toggle("collapsed", on);
+      var c = item.querySelector(".caret");
+      if (c) {
+        c.setAttribute("aria-expanded", on ? "false" : "true");
+        c.setAttribute("aria-label", (on ? "Expand" : "Collapse") + " details");
+        c.title = on ? "Show details" : "Hide details";
+      }
+      refreshToggle();
+    }
+    // ---------- Expand All / Collapse All (all cards, including greyed-out ones) ----------
+    function allCards() { return Array.prototype.slice.call($("itemList").querySelectorAll(".item")); }
+    function anyCollapsed(cards) {
+      return cards.some(function (c) { return !!collapsed[c.getAttribute("data-id")]; });
+    }
+    function refreshToggle() {
+      var b = $("toggleAllBtn"); if (!b) return;
+      var cards = allCards();
+      b.textContent = anyCollapsed(cards) ? "Expand All" : "Collapse All";
+      b.disabled = cards.length === 0;
+    }
+    function toggleAll() {
+      var cards = allCards();
+      var collapse = !anyCollapsed(cards);   // any collapsed -> expand all; none collapsed -> collapse all
+      cards.forEach(function (c) { setCollapsed(c, c.getAttribute("data-id"), collapse); });
+      refreshToggle();
+    }
 
     function available() { return data.items.filter(function (it) { return !it.approved; }); }
     function selected() { return available().filter(function (it) { return choices[it.id] === "approve"; }); }
@@ -864,6 +1423,7 @@
     function submit() {
       if (busy) return;
       busy = true;
+      setnav();
       closeConfirm();
       var ids = selected().map(function (it) { return it.id; });
       $("review").classList.add("hidden");
@@ -875,6 +1435,8 @@
 
     function onSubmit(res) {
       busy = false;
+      upData = null;
+      setNav();
       if (!res.success) {
         setState("fail", "\u2718", res.title || "Error", res.message || "");
         $("backBtn").classList.remove("hidden");
@@ -908,15 +1470,30 @@
       // $("backBtn").addEventListener("click", load);
       $("backBtn").addEventListener("click", function () { if (page === "last") loadLast(); else load(); });
       $("toggleAllBtn").addEventListener("click", toggleAll);
-      $("proceedTopBtn").addEventListener("click", proceed);
-      $("proceedBtn").addEventListener("click", proceed);
+      // $("proceedTopBtn").addEventListener("click", proceed);
+      // $("proceedBtn").addEventListener("click", proceed);
+      ["navLastTop"].forEach(function (id) { $(id).addEventListener("click", function () { goTo("last"); }); });
+      ["navThisTop"].forEach(function (id) { $(id).addEventListener("click", function () { goTo("upcoming"); }); });
+      buildMenu();
+      $("menuBtn").addEventListener("click", function (e) {
+        e.stopPropagation();
+        if ($("menuList").classList.contains("hidden")) openMenu(); else closeMenu();
+      });
+      document.addEventListener("click", function (e) {
+        if (!$("techMenu").contains(e.target)) closeMenu();
+      });
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape" && $("confirmModal").classList.contains("open")) closeConfirm();
+        if (e.key === "Escape" && !$("menuList").classList.contains("hidden")) { closeMenu(); $("menuBtn").focus(); }
       });
       //load();
-      loadLast();
-      prefetchUpcoming();
+      //loadLast();
+      //prefetchUpcoming();
+      showPage("last");
+      loadLast();   // Last Week Review is shown first
+      load();       // Upcoming Week Review loads in the background
     })();
   </script>
 </body>
+
 </html>
