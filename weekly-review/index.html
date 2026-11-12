@@ -1010,6 +1010,7 @@
       $("results").classList.add("hidden");
       $("reviewBtn").classList.add("hidden");
       $("backBtn").classList.add("hidden");
+      $("toggleAllBtn").classList.add("hidden");
     }
     function showFail(res) {
       setState("fail", "\u2718", res.title || "Error", res.message || "");
@@ -1088,6 +1089,7 @@
         : "There were no jobs scheduled " + data.weekText + ".");
       renderItems();
       $("review").classList.remove("hidden");
+      $("toggleAllBtn").classList.remove("hidden");
       if (data.items.length) showMenu();
     }
 
