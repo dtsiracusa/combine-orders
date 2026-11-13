@@ -24,7 +24,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Wieland Healthcare — Upcoming Week Review</title>
+  <!-- <title>Wieland Healthcare — Upcoming Week Review</title> -->
+  <title>Wieland Healthcare — Master Page</title>
   <style>
     body {
       margin: 0;
@@ -45,6 +46,7 @@
       max-width: 900px;
       width: 94%;
       overflow: hidden;
+      overflow: clip;   /* Master Page: clip keeps the rounded corners but lets the tab bar stick; older browsers use hidden */
     }
 
     .card-header {
@@ -572,7 +574,7 @@
       top: 12px;
       right: 12px;
       text-align: left;
-      z-index: 10;
+      z-index: 30;
     }
 
     .menu-btn {
@@ -631,6 +633,111 @@
       background: #e3f2fd;
     }
 
+    /* ---------- Master Page: tab bar ---------- */
+    .tabbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      padding: 10px 24px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+    }
+
+    .tab-btn {
+      padding: 10px 6px;
+      border: 1px solid #1565c0;
+      border-radius: 6px;
+      background: #fff;
+      color: #1565c0;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tab-btn:hover {
+      background: #e3f2fd;
+    }
+
+    .tab-btn[aria-selected="true"] {
+      background: #1565c0;
+      color: #fff;
+    }
+
+    .tab-btn:disabled {
+      opacity: .45;
+      cursor: default;
+    }
+
+    .tab-btn:focus-visible {
+      outline: 3px solid #90caf9;
+      outline-offset: 2px;
+    }
+
+    /* ---------- Master Page: group sections (Upcoming, Group Orders) ---------- */
+    .grp {
+      margin-bottom: 14px;
+    }
+
+    .grp-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      border: 1px solid #e0e0e0;
+      border-left: 6px solid var(--gc, #c4c4c4);
+      border-radius: 8px;
+      background: #fafafa;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      color: #212121;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .grp-head:focus-visible {
+      outline: 3px solid #90caf9;
+      outline-offset: 2px;
+    }
+
+    .grp-caret {
+      display: inline-block;
+      color: #616161;
+      transition: transform .15s ease;
+    }
+
+    .grp.collapsed .grp-caret {
+      transform: rotate(-90deg);
+    }
+
+    .grp.collapsed .grp-body {
+      display: none;
+    }
+
+    .grp-count {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 400;
+      color: #616161;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 480px) {
+      .tabbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding: 8px 12px;
+      }
+    }
+
     @media (max-width: 600px) {
       .vals {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -676,6 +783,13 @@
       </div>
       <h1 id="title">Loading...</h1>
     </div>
+    <!-- Master Page tabs -->
+    <div class="tabbar" id="tabBar" role="tablist" aria-label="Pages">
+      <button type="button" class="tab-btn" role="tab" id="tab_last" data-page="last" aria-selected="false">Last Week</button>
+      <button type="button" class="tab-btn" role="tab" id="tab_current" data-page="current" aria-selected="false">This Week</button>
+      <button type="button" class="tab-btn" role="tab" id="tab_upcoming" data-page="upcoming" aria-selected="false">Upcoming</button>
+      <button type="button" class="tab-btn" role="tab" id="tab_groups" data-page="groups" aria-selected="false">Group Orders</button>
+    </div>
     <div class="card-body">
       <p class="message" id="message">Please wait while the items are loaded.</p>
       <div id="review" class="hidden">
@@ -683,10 +797,11 @@
                   <button type="button" class="btn btn-small" id="proceedTopBtn">Proceed -&gt;</button>
                 </div> -->
         <div class="page-nav" id="navTop">
-          <button type="button" class="btn btn-small" id="navLastTop">&lt;- Last Week</button>
-          <button type="button" class="btn btn-small" id="navThisTop">This Week -&gt;</button> 
+          <!-- <button type="button" class="btn btn-small" id="navLastTop">&lt;- Last Week</button> -->
+          <!-- <button type="button" class="btn btn-small" id="navThisTop">This Week -&gt;</button>  -->
+          <button type="button" class="btn hidden" id="reviewBtn" disabled>Review &amp; Confirm</button>
         </div>
-        </div>
+        <!-- </div> --><!-- Master Page: extra close tag. It closed #review early and pushed the footer outside the card (card shifted left). -->
         <div class="toolbar">
           <div class="who" id="whoBox">
             <label for="whoSelect">Confirmed by:</label>
@@ -695,8 +810,9 @@
           <!-- <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button> -->
           <div class="tb-right">
             <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
-            <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn" aria-controls="itemList">Collapse
-              All</button>
+            <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn" aria-controls="itemList">Collapse All</button>
+            <button type="button" class="btn btn-small btn-outline hidden" id="groupsBtn" aria-controls="itemList">Collapse Groups</button>
+            <button type="button" class="btn btn-small btn-outline hidden" id="refreshBtn">Refresh</button>
           </div>
         </div>
         <p class="counts" id="counts" aria-live="polite"></p>
@@ -705,7 +821,6 @@
       <div id="results" class="hidden"></div>
     </div>
     <div class="card-footer" id="footer">
-      <button type="button" class="btn hidden" id="reviewBtn" disabled>Review &amp; Confirm</button>
       <button type="button" class="btn hidden" id="backBtn">Back to Items</button>
       <!-- <button type="button" class="btn hidden" id="proceedBtn">Proceed -&gt;</button> -->
       <span class="nav-foot" id="navFoot">
@@ -832,7 +947,8 @@
       $("title").textContent = title;
       $("message").textContent = message || "";
       $("message").classList.toggle("hidden", !message);
-        document.title = title + " — Wieland Healthcare";
+        // document.title = title + " — Wieland Healthcare";
+        document.title = "Wieland Healthcare — Master Page" + (title ? " — " + title : "");
         closeMenu();
         $("techMenu").classList.add("hidden");   // shown again only when cards are on screen
       }
@@ -996,6 +1112,7 @@
 
     */
 
+    /* ---------- Previous Load / page switching (two pages; replaced by the Master Page section below) ----------
     // ---------- Load / page switching ----------
     // Each page keeps its last response, Approve choices, and collapse states.
     // Switching pages reuses them; only Back to Items (or a failed load) requests new data.
@@ -1128,17 +1245,255 @@
         else load();
       }
     }
-    
+    */
+
+    // ---------- Master Page: load / tab switching ----------
+    // Tabs: "last" = Last Week, "current" = This Week, "upcoming" = Upcoming, "groups" = Group Orders.
+    // Each tab keeps its last response and collapse states. Switching tabs reuses them;
+    // Back to Items, Refresh, or a failed load requests new data.
+    // On page load: Last Week + (This Week and Upcoming in one request). Group Orders loads on first selection.
+    var TAB_NAMES = { last: "Last Week Review", current: "This Week Review", upcoming: "Upcoming", groups: "Group Orders" };
+    var LOAD_MSG = {
+      last: "Please wait while last week's items are loaded.",
+      current: "Please wait while this week's items are loaded.",
+      upcoming: "Please wait while the upcoming weeks' items are loaded.",
+      groups: "Please wait while the Group Orders items are loaded."
+    };
+    var pages = {
+      last: { data: null, collapsed: {}, loading: false },
+      current: { data: null, collapsed: {}, loading: false },
+      upcoming: { data: null, collapsed: {}, loading: false },
+      groups: { data: null, collapsed: {}, loading: false }
+    };
+    var sectionCollapsed = {};   // groupId -> true (collapsed) | false (expanded); sections start expanded
+
+    function notConfigured() {
+      if (APPS_SCRIPT_URL.indexOf("PASTE") !== 0) return false;
+      setState("fail", "\u2718", "Not Configured", "APPS_SCRIPT_URL has not been set in this page.");
+      return true;
+    }
+    function showLoading(msg) {
+      spinner("Loading...", msg);
+      $("review").classList.add("hidden");
+      $("results").classList.add("hidden");
+      $("reviewBtn").classList.add("hidden");
+      $("backBtn").classList.add("hidden");
+      $("toggleAllBtn").classList.add("hidden");
+      $("groupsBtn").classList.add("hidden");
+    }
+    function showFail(res) {
+      setState("fail", "\u2718", res.title || "Error", res.message || "");
+      $("review").classList.add("hidden");
+      $("backBtn").classList.remove("hidden");
+    }
+    // Flattens [{ id, title, color, items }] so counts and Collapse All work on all cards.
+    function sectionData(sections) {
+      var items = [];
+      sections.forEach(function (sec) { items = items.concat(sec.items || []); });
+      return { items: items, sections: sections };
+    }
+    function isOn(p) { return page === p; }
+
+    // This Week + Upcoming (one request)
+    function load() {
+      if (notConfigured()) return;
+      pages.current.data = null; pages.upcoming.data = null;
+      pages.current.loading = true; pages.upcoming.loading = true;
+      if (isOn("current") || isOn("upcoming")) showLoading(LOAD_MSG[page]);
+      callApi("action=load", LOAD_TIMEOUT_MS, onLoad);
+    }
+    function onLoad(res) {
+      pages.current.loading = false; pages.upcoming.loading = false;
+      if (!res.success) {
+        if (isOn("current") || isOn("upcoming")) showFail(res);   // other tabs: try again when selected
+        return;
+      }
+      pages.current.data = res;
+      choices = {};
+      pages.current.collapsed = {};
+      pages.upcoming.data = sectionData(res.upcoming || []);
+      pages.upcoming.collapsed = {};
+      if (isOn("current") || isOn("upcoming")) renderPage();
+    }
+
+    // Last Week
+    function loadLast() {
+      if (notConfigured()) return;
+      pages.last.data = null;
+      pages.last.loading = true;
+      if (isOn("last")) showLoading(LOAD_MSG.last);
+      callApi("action=loadLast", LOAD_TIMEOUT_MS, onLoadLast);
+    }
+    function onLoadLast(res) {
+      pages.last.loading = false;
+      if (!res.success) {
+        if (isOn("last")) showFail(res);
+        return;
+      }
+      pages.last.data = res;
+      pages.last.collapsed = {};
+      if (isOn("last")) renderPage();
+    }
+
+    // Group Orders (only when the tab is selected, or Refresh)
+    function loadGroups() {
+      if (notConfigured()) return;
+      pages.groups.data = null;
+      pages.groups.loading = true;
+      if (isOn("groups")) showLoading(LOAD_MSG.groups);
+      callApi("action=loadGroups", LOAD_TIMEOUT_MS, onLoadGroups);
+    }
+    function onLoadGroups(res) {
+      pages.groups.loading = false;
+      if (!res.success) {
+        if (isOn("groups")) showFail(res);
+        return;
+      }
+      pages.groups.data = sectionData(res.sections || []);
+      pages.groups.collapsed = {};
+      if (isOn("groups")) renderPage();
+    }
+
+    function reload(p) {
+      if (p === "last") loadLast();
+      else if (p === "groups") loadGroups();
+      else load();
+    }
+
+    function renderPage() {
+      data = pages[page].data;
+      collapsed = pages[page].collapsed;
+      showPage(page);
+      $("results").classList.add("hidden");
+      $("backBtn").classList.add("hidden");
+      if (page === "last") renderLast();
+      else if (page === "current") renderCurrent();
+      else renderView();
+    }
+
+    // This Week (Approve flow)
+    function renderCurrent() {
+      if (!data.items.length) {
+        setState("info", "", TAB_NAMES.current,
+          "There are no items in \u201c" + (data.groupTitle || "This Week (Locked)") + "\u201d right now.");
+        $("review").classList.add("hidden");
+        $("reviewBtn").classList.add("hidden");
+        return;
+      }
+      setState("ready", "&#128203;", TAB_NAMES.current,
+        "Review each job in \u201c" + data.groupTitle + "\u201d. Choose Approve for jobs that are ready, " +
+        "then select Review & Confirm. Approved jobs have their Review Status set to Approved.");
+      renderItems();
+      $("review").classList.remove("hidden");
+      $("reviewBtn").classList.remove("hidden");
+      $("toggleAllBtn").classList.remove("hidden");
+      updateReviewBtn();
+      showMenu();
+    }
+
+    // Last Week (view only)
+    function renderLast() {
+      setState("ready", "&#128203;", TAB_NAMES.last, data.items.length
+        ? "Jobs scheduled " + data.weekText + ". This page is view only."
+        : "There were no jobs scheduled " + data.weekText + ".");
+      renderItems();
+      $("review").classList.remove("hidden");
+      $("toggleAllBtn").classList.remove("hidden");
+      if (data.items.length) showMenu();
+    }
+
+    // Upcoming and Group Orders (view only, one section per group)
+    function renderView() {
+      var n = data.items.length;
+      var msg = page === "upcoming"
+        ? "Jobs in the upcoming locked weeks. This page is view only."
+        : "Jobs in the future schedule groups. This page is view only for now.";
+      setState(n ? "ready" : "info", n ? "&#128203;" : "", TAB_NAMES[page],
+        n ? msg : "There are no jobs in these groups right now.");
+      renderItems();
+      $("review").classList.remove("hidden");
+      $("toggleAllBtn").classList.remove("hidden");
+      $("groupsBtn").classList.remove("hidden");
+      refreshGroupsBtn();
+      if (n) showMenu();
+    }
+
+    function showPage(p) {
+      page = p;
+      var cur = p === "current";
+      $("whoBox").classList.toggle("hidden", !cur);
+      $("approveAllBtn").classList.toggle("hidden", !cur);
+      if (!cur) $("reviewBtn").classList.add("hidden");
+      $("refreshBtn").classList.toggle("hidden", p !== "groups");
+      $("groupsBtn").classList.toggle("hidden", p !== "upcoming" && p !== "groups");
+      setNav();
+    }
+
+    // Tab buttons: the tab on screen is marked selected. All tabs are disabled while submitting.
+    function setNav() {
+      Array.prototype.forEach.call($("tabBar").querySelectorAll(".tab-btn"), function (b) {
+        var on = b.getAttribute("data-page") === page;
+        b.setAttribute("aria-selected", on ? "true" : "false");
+        b.tabIndex = on ? 0 : -1;
+        b.disabled = busy;
+      });
+      $("refreshBtn").disabled = busy || pages.groups.loading;
+      $("navFoot").classList.toggle("hidden", busy);
+    }
+
+    function goTo(p) {
+      if (busy) return;
+      if (p === page && pages[p].data && !$("review").classList.contains("hidden")) return;   // already on screen
+      showPage(p);
+      window.scrollTo(0, 0);
+      if (pages[p].data) renderPage();
+      else if (pages[p].loading) showLoading(LOAD_MSG[p]);
+      else reload(p);
+    }
+
+    // Group section header and body. Returns the body that cards are added to.
+    function sectionBox(sec, list) {
+      var wrap = el("section", "grp");
+      if (validHex(sec.color)) wrap.style.setProperty("--gc", sec.color);
+      var bodyId = "grp_" + sec.id;
+      var head = el("button", "grp-head");
+      head.type = "button";
+      head.setAttribute("aria-controls", bodyId);
+      head.appendChild(el("span", "grp-caret", "\u25BE"));
+      head.appendChild(el("span", null, sec.title));
+      head.appendChild(el("span", "grp-count", (sec.items || []).length + " job(s)"));
+      var box = el("div", "grp-body");
+      box.id = bodyId;
+      if (!(sec.items || []).length) box.appendChild(el("p", "note", "No jobs in this group."));
+      function apply(on) {
+        sectionCollapsed[sec.id] = on;
+        wrap.classList.toggle("collapsed", on);
+        head.setAttribute("aria-expanded", on ? "false" : "true");
+        head.title = on ? "Show group" : "Hide group";
+      }
+      // head.addEventListener("click", function () { apply(!wrap.classList.contains("collapsed")); });
+      head.addEventListener("click", function () { apply(!wrap.classList.contains("collapsed")); refreshGroupsBtn(); });
+      wrap.applyCollapse = apply;   // used by Collapse Groups / Expand Groups
+      wrap.appendChild(head);
+      wrap.appendChild(box);
+      list.appendChild(wrap);
+      return box;
+    }
 
     // ---------- Render ----------
     function renderItems() {
       var list = $("itemList");
       list.textContent = "";
       var osDefaultBg = page === "last" ? orderDefaultColor() : "";
-      data.items.forEach(function (it) {
+      // Master Page: Upcoming and Group Orders are drawn as one section per group; other tabs are one flat list.
+      var secs = data.sections || [{ items: data.items }];
+      secs.forEach(function (sec) {
+      var target = data.sections ? sectionBox(sec, list) : list;
+      sec.items.forEach(function (it) {
         var f = fieldMap(it);
         // var disabled = !!it.approved;
-        var readOnly = page === "last";                // Last Week Review: no choices, never greyed out
+        // var readOnly = page === "last";                // Last Week Review: no choices, never greyed out
+        var readOnly = page !== "current";             // only This Week has choices; view-only tabs are never greyed out
         var disabled = !readOnly && !!it.approved;
         var item = el("div", "item" + (disabled ? " disabled" : ""));
         item.setAttribute("data-id", it.id);
@@ -1146,7 +1501,8 @@
 
         // Top-right: Order Status tab (Last Week Review only) and Review Status tab, side by side
         var tabs = el("div", "tabs");
-        if (readOnly) {
+        // if (readOnly) {
+        if (page === "last") {
           var os = f[ORDER_COL] || {};
           var osText = os.text || ORDER_DEFAULT;
           var osTab = el("div", "cs-tab");
@@ -1188,7 +1544,8 @@
         var n = el("div", "item-name");
         // n.appendChild(link(it.name, it.srUrl || it.url));
         // n.title = it.srUrl ? "Open Service Request" : "Open in monday";
-        if (readOnly) {
+        // if (readOnly) {
+        if (page === "last") {
           n.appendChild(link(it.name, it.visitUrl));     // plain text when Tech Visit is blank
           if (it.visitUrl) n.title = "Open Tech Visit";
         } else {
@@ -1268,6 +1625,8 @@
         // Choices or note
         if (readOnly) {
           // Last Week Review: view only, no choices
+          // Upcoming / Group Orders: view only; show who approved when Review Status is Approved
+          if (page !== "last" && it.approved) item.appendChild(el("div", "note", it.note || "Already Approved."));
         } else if (disabled) {
           item.appendChild(el("div", "note", it.note || "Already Approved."));
         } else {
@@ -1311,8 +1670,10 @@
           ch.appendChild(tg);
           item.appendChild(ch);
         }
-        list.appendChild(item);
+        // list.appendChild(item);
+        target.appendChild(item);
       });
+      });   // Master Page: end of sections loop
       updateCounts();
       refreshToggle();
     }
@@ -1365,7 +1726,28 @@
       var cards = allCards();
       var collapse = !anyCollapsed(cards);   // any collapsed -> expand all; none collapsed -> collapse all
       cards.forEach(function (c) { setCollapsed(c, c.getAttribute("data-id"), collapse); });
+      // Master Page: Expand All also opens collapsed group sections
+      // (Replaced by the separate Collapse Groups / Expand Groups button.)
+      // if (!collapse) {
+      //   Array.prototype.forEach.call($("itemList").querySelectorAll(".grp.collapsed .grp-head"), function (h) { h.click(); });
+      // }
       refreshToggle();
+    }
+
+    // ---------- Master Page: Expand Groups / Collapse Groups (Upcoming, Group Orders) ----------
+    function allSections() { return Array.prototype.slice.call($("itemList").querySelectorAll(".grp")); }
+    function refreshGroupsBtn() {
+      var b = $("groupsBtn"); if (!b) return;
+      var secs = allSections();
+      var any = secs.some(function (g) { return g.classList.contains("collapsed"); });
+      b.textContent = any ? "Expand Groups" : "Collapse Groups";
+      b.disabled = secs.length === 0;
+    }
+    function toggleGroups() {
+      var secs = allSections();
+      var collapse = !secs.some(function (g) { return g.classList.contains("collapsed"); });   // any collapsed -> expand all
+      secs.forEach(function (g) { if (g.applyCollapse) g.applyCollapse(collapse); });
+      refreshGroupsBtn();
     }
 
     function available() { return data.items.filter(function (it) { return !it.approved; }); }
@@ -1375,6 +1757,10 @@
       if (!data) return;
       if (page === "last") {
         $("counts").textContent = data.items.length + " job(s) scheduled " + data.weekText + ".";
+        return;
+      }
+      if (page === "upcoming" || page === "groups") {
+        $("counts").textContent = data.items.length + " job(s) in " + (data.sections || []).length + " group(s).";
         return;
       }
       $("counts").textContent = data.items.length + " item(s), " + available().length + " awaiting review, " +
@@ -1425,7 +1811,8 @@
     function submit() {
       if (busy) return;
       busy = true;
-      setnav();
+      // setnav();   // typo: setnav is not defined, so Review & Confirm stopped here
+      setNav();
       closeConfirm();
       var ids = selected().map(function (it) { return it.id; });
       $("review").classList.add("hidden");
@@ -1438,6 +1825,8 @@
     function onSubmit(res) {
       busy = false;
       upData = null;
+      pages.current.data = null;    // This Week and Upcoming reload on Back to Items or next tab visit
+      pages.upcoming.data = null;
       setNav();
       if (!res.success) {
         setState("fail", "\u2718", res.title || "Error", res.message || "");
@@ -1470,12 +1859,26 @@
       $("cancelBtn").addEventListener("click", closeConfirm);
       $("submitBtn").addEventListener("click", submit);
       // $("backBtn").addEventListener("click", load);
-      $("backBtn").addEventListener("click", function () { if (page === "last") loadLast(); else load(); });
+      // $("backBtn").addEventListener("click", function () { if (page === "last") loadLast(); else load(); });
+      $("backBtn").addEventListener("click", function () { reload(page); });
+      $("refreshBtn").addEventListener("click", function () { if (!busy) loadGroups(); });
+      $("groupsBtn").addEventListener("click", toggleGroups);
       $("toggleAllBtn").addEventListener("click", toggleAll);
       // $("proceedTopBtn").addEventListener("click", proceed);
       // $("proceedBtn").addEventListener("click", proceed);
-      ["navLastTop"].forEach(function (id) { $(id).addEventListener("click", function () { goTo("last"); }); });
-      ["navThisTop"].forEach(function (id) { $(id).addEventListener("click", function () { goTo("upcoming"); }); });
+      // ["navLastTop"].forEach(function (id) { $(id).addEventListener("click", function () { goTo("last"); }); });
+      // ["navThisTop"].forEach(function (id) { $(id).addEventListener("click", function () { goTo("upcoming"); }); });
+      Array.prototype.forEach.call($("tabBar").querySelectorAll(".tab-btn"), function (b) {
+        b.addEventListener("click", function () { goTo(b.getAttribute("data-page")); });
+      });
+      // Arrow keys move between tabs
+      $("tabBar").addEventListener("keydown", function (e) {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        var tabs = Array.prototype.slice.call($("tabBar").querySelectorAll(".tab-btn"));
+        var i = tabs.indexOf(document.activeElement); if (i === -1) return;
+        var nx = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+        nx.focus(); nx.click();
+      });
       buildMenu();
       $("menuBtn").addEventListener("click", function (e) {
         e.stopPropagation();
@@ -1493,7 +1896,7 @@
       //prefetchUpcoming();
       showPage("last");
       loadLast();   // Last Week Review is shown first
-      load();       // Upcoming Week Review loads in the background
+      load();       // This Week + Upcoming load in the background (Group Orders loads when its tab is selected)
     })();
   </script>
 </body>
