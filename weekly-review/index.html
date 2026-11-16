@@ -818,7 +818,26 @@
       .co-sheet { align-items: center; }
       .co-panel { border-radius: 12px; }
     }
-  </style>
+    /* ---------- Master Page: Group pop-up as cards ---------- */
+    .item.no-tabs .item-head { padding-right: 0; }
+    .co-panel { max-width: 860px; }
+    .co-dest { background: #f5f6f8; border-bottom: 1px solid #e6e6e6; }
+    .co-dest .item { margin-bottom: 6px; background: #fff; }
+    .co-label { font-size: 11px; color: #9e9e9e; text-transform: uppercase; letter-spacing: .04em; margin: 10px 0 6px; }
+    .co-copy-note { font-size: 13px; color: #616161; }
+    .co-grp-line { font-size: 13px; color: #616161; }
+    .co-open { font-size: 13px; margin-top: 2px; }
+    .co-open a { color: #1565c0; }
+    .co-card { cursor: default; }
+    .co-card.co-picked { background: #e8f5e9; border-color: #2e7d32; }
+    .co-pick { width: 20px; height: 20px; margin: 4px 2px 0 0; flex: none; cursor: pointer; }
+    .co-foot { justify-content: space-between; flex-wrap: wrap; align-items: center; }
+    .co-foot .co-tools { padding: 0; gap: 14px; }
+    .co-foot-btns { display: flex; gap: 8px; margin-left: auto; }
+    @media (max-width: 480px) {
+      .item.no-tabs { padding-top: 12px; }
+    }
+    </style>
 </head>
 
 <body>
@@ -925,6 +944,9 @@
     var ORDER_DEFAULT = "Open";                // shown when Order Status is blank
     var ORDER_DEFAULT_COLOR = "";              // optional hex for blank Order Status, e.g. "#579bfc"; "" = use the color monday returns for "Open"
     var TECH_APPROVED_COL = "color_mm8dp78e";
+    // Master Page: Upcoming groups whose cards show the Tech Approved tab (top-right).
+    // Add or remove group IDs here. Other Upcoming groups show no tab.
+    var TECH_TAB_GROUPS = ["group_mkzz33yj"];   // Next Week (Locked)
     var SOLD_TO_COL = "text_mm1b4w1t";         // header left
     var CITY_COL = "text_mm1dy2mz";            // header left
     var CHIP_COLS = ["color_mm1c7719", "color_mm1jzrpg", "color_mm8dp78e"];
@@ -1588,8 +1610,19 @@
           tab.style.background = bg; tab.style.color = textOn(bg);
           tab.title = "Review Status: " + rvText;
           // item.appendChild(tab);
-          tabs.appendChild(tab);
-          item.appendChild(tabs);
+          // tabs.appendChild(tab);
+          // item.appendChild(tabs);
+          // Master Page: Review Status tab only on Last Week, This Week, and Upcoming
+          // if (page !== "groups") { tabs.appendChild(tab); item.appendChild(tabs); }
+          // else item.classList.add("no-tabs");
+          // Master Page: Last Week = Order Status + Review Status; This Week = Tech Approved;
+          // Upcoming = Tech Approved in TECH_TAB_GROUPS only; Group Orders = none.
+          var topTab = null;
+          if (page === "last") topTab = tab;
+          else if (page === "current" ||
+            (page === "upcoming" && TECH_TAB_GROUPS.indexOf(sec.id) !== -1)) topTab = techTab(f);
+          if (topTab) { tabs.appendChild(topTab); item.appendChild(tabs); }
+          else item.classList.add("no-tabs");
 
           // Header (left): caret, item name, Sold To, City
           var head = el("div", "item-head");
@@ -1742,6 +1775,18 @@
       refreshToggle();
     }
 
+    // Master Page: Tech Approved tab (top-right). Blank shows "Not Yet" in grey, same as Review Status.
+    function techTab(f) {
+      var ta = f[TECH_APPROVED_COL] || {};
+      var taText = ta.text || "Not Yet";
+      var t = el("div", "cs-tab");
+      t.appendChild(el("span", null, ta.title || "Tech Approved"));
+      t.appendChild(document.createTextNode(taText));
+      var bg = (ta.text && validHex(ta.color)) ? ta.color : "#c4c4c4";
+      t.style.background = bg; t.style.color = textOn(bg);
+      t.title = (ta.title || "Tech Approved") + ": " + taText;
+      return t;
+    }
     // Color for a blank Order Status: ORDER_DEFAULT_COLOR if set, else the color monday returned for "Open" on any loaded item
     function orderDefaultColor() {
       if (validHex(ORDER_DEFAULT_COLOR)) return ORDER_DEFAULT_COLOR;
@@ -1759,10 +1804,13 @@
       });
     }
     // Default: collapsed when already Approved on the board, or when Approve is selected.
+    // Master Page: all cards start collapsed on every tab. A caret click, Approve toggle,
+    // Expand Jobs, or Clear All still sets the state for that card (stored in "collapsed").
     function isCollapsed(it) {
       if (Object.prototype.hasOwnProperty.call(collapsed, it.id)) return collapsed[it.id];
-      if (page === "last") return false; // Last Week Review: cards start expanded
-      return !!it.approved || choices[it.id] === "approve";
+      // if (page === "last") return false; // Last Week Review: cards start expanded
+      // return !!it.approved || choices[it.id] === "approve";
+      return true;
     }
     function setCollapsed(item, id, on) {
       collapsed[id] = on;
@@ -1975,6 +2023,8 @@
     var CO_LIST_TIERS = ["Match", "Possible", "Other City"];
     var CO_TIER_CODE = { "Match": "M", "Possible": "P", "Other City": "O" };
     var CO_TIER_CLS = { "Match": "co-tier-m", "Possible": "co-tier-p", "Other City": "co-tier-o" };
+    // Match Tier tab colors on candidate cards (same as the .co-tier-* badge colors)
+    var CO_TIER_HEX = { "Match": "#00c875", "Possible": "#fdab3d", "Other City": "#a25ddc" };
     var CO_MAX_MOVES = 12;        // keep the same as CFG.CO_MAX_MOVES in Apps Script
     var coItems = [];             // all Group Orders cards from the last loadGroups response
     var coMoved = {};             // itemId -> { batchId, to, by, at } (from the log + this session)
@@ -2088,9 +2138,20 @@
         if (i < dests.length) setTimeout(step, 0);
       })();
     }
+    // true when the card has at least one candidate the pop-up would list
+    function coHasCands(id) {
+      var n = coCounts[id];
+      return !!n && CO_LIST_TIERS.some(function (t) { return n[t] > 0; });
+    }
+    function coSetGroupBtn(gb, id) {
+      if (!gb) return;
+      gb.disabled = busy || !coHasCands(id);
+      gb.title = !coCounts[id] ? "Checking for matches" : (coHasCands(id) ? "" : "No matching jobs");
+    }
     function coFillBadge(box, id) {
       box.textContent = "";
       var n = coCounts[id];
+      coSetGroupBtn($("coGrp_" + id), id);   // Master Page: Group button off when no matches
       if (!n) { box.appendChild(el("span", null, "Checking\u2026")); return; }
       var any = false;
       CO_BADGE_TIERS.forEach(function (t) {
@@ -2118,6 +2179,8 @@
       if (!it.coParent && !it.coChild) return bar;
       var gb = el("button", "co-btn", it.coParent ? "Group (Parent)" : "Group (Target)");
       gb.type = "button";
+      gb.id = "coGrp_" + it.id;
+      coSetGroupBtn(gb, it.id);   // disabled while checking and when there are no matches
       gb.setAttribute("aria-label", "Find jobs to group with " + it.name);
       gb.addEventListener("click", function () { coOpen(it); });
       bar.appendChild(gb);
@@ -2129,6 +2192,7 @@
     }
 
     // ---------- Candidate sheet ----------
+    /*
     function coBuildSheet() {
       if ($("coSheet")) return;
       var sh = el("div", "co-sheet hidden");
@@ -2157,6 +2221,38 @@
       [hd, dest, tools, list, msg, ft].forEach(function (n) { pn.appendChild(n); });
       sh.appendChild(pn);
       document.body.appendChild(sh);
+    */
+    function coBuildSheet() {
+      if ($("coSheet")) return;
+      var sh = el("div", "co-sheet hidden");
+      sh.id = "coSheet";
+      sh.setAttribute("role", "dialog");
+      sh.setAttribute("aria-modal", "true");
+      sh.setAttribute("aria-labelledby", "coTitle");
+      var pn = el("div", "co-panel");
+      var hd = el("div", "co-head");
+      var h = el("h2", null, "Group Orders"); h.id = "coTitle";
+      var x = el("button", "co-close", "\u00D7"); x.type = "button"; x.id = "coClose"; x.setAttribute("aria-label", "Close");
+      hd.appendChild(h); hd.appendChild(x);
+      var dest = el("div", "co-dest"); dest.id = "coDest";      // parent/target card (does not scroll)
+      var list = el("div", "co-list"); list.id = "coList";      // candidate cards (scrolls)
+      var msg = el("div", "co-msg"); msg.id = "coMsg"; msg.setAttribute("aria-live", "polite");
+      // Fixed bottom bar: Select all + counter (left), Cancel + Move (right)
+      var ft = el("div", "co-foot");
+      var tools = el("div", "co-tools");
+      var allLab = el("label");
+      var all = document.createElement("input"); all.type = "checkbox"; all.id = "coAll";
+      allLab.appendChild(all); allLab.appendChild(document.createTextNode(" Select all"));
+      var cnt = el("span", null, ""); cnt.id = "coCount"; cnt.setAttribute("aria-live", "polite");
+      tools.appendChild(allLab); tools.appendChild(cnt);
+      var btns = el("div", "co-foot-btns");
+      var cancel = el("button", "co-btn co-btn-outline", "Cancel"); cancel.type = "button"; cancel.id = "coCancel";
+      var go = el("button", "co-btn", "Move"); go.type = "button"; go.id = "coGo";
+      btns.appendChild(cancel); btns.appendChild(go);
+      ft.appendChild(tools); ft.appendChild(btns);
+      [hd, dest, list, msg, ft].forEach(function (n) { pn.appendChild(n); });
+      sh.appendChild(pn);
+      document.body.appendChild(sh);
 
       x.addEventListener("click", coClose);
       cancel.addEventListener("click", coClose);
@@ -2177,15 +2273,25 @@
 
     function coOpen(it) {
       if (busy) return;
+      if(!coHasCands(it.id)) return;  //Master Page: gGRoup button is disabled when there are no matches
       coBuildSheet();
       var cands = coCandidates(it).filter(function (c) { return CO_LIST_TIERS.indexOf(c.tier) !== -1; });
       coSheetState = { dest: it, cands: cands, sel: {}, done: false };
-      $("coTitle").textContent = (it.coParent ? "Parent: " : "Target: ") + it.name;
+      // $("coTitle").textContent = (it.coParent ? "Parent: " : "Target: ") + it.name;
+      // var d = $("coDest");
+      // d.textContent = "";
+      // d.appendChild(el("div", null, it.groupTitle || ""));
+      // d.appendChild(el("div", null, "Sold To: " + dash(it.coSold) + "   |   City, State: " + dash(it.coCity)));
+      // d.appendChild(el("div", null, "Selected jobs move directly below this job and get its Color Status, " +
+      //   "Week Of, Scheduled Date/Time, and Tech. Blank values are not copied."));
+      // Master Page: parent/target as a card (header only) above the candidate cards
+      coSheetState.open = {};   // candidate id -> true when expanded
+      $("coTitle").textContent = "Group Orders";
       var d = $("coDest");
       d.textContent = "";
-      d.appendChild(el("div", null, it.groupTitle || ""));
-      d.appendChild(el("div", null, "Sold To: " + dash(it.coSold) + "   |   City, State: " + dash(it.coCity)));
-      d.appendChild(el("div", null, "Selected jobs move directly below this job and get its Color Status, " +
+      d.appendChild(el("div", "co-label", it.coParent ? "Parent" : "Target"));
+      d.appendChild(coCard(it, null));
+      d.appendChild(el("div", "co-copy-note", "Selected jobs move directly below this job and get its Color Status, " +
         "Week Of, Scheduled Date/Time, and Tech. Blank values are not copied."));
       $("coMsg").textContent = "";
       $("coAll").checked = false;
@@ -2204,35 +2310,171 @@
       coSheetState = null;
     }
 
+    /*
+    function coRenderList() {
+      ... (old function, unchanged, inside the comment)
+    }
+    */
     function coRenderList() {
       var s = coSheetState, list = $("coList");
       list.textContent = "";
+      list.appendChild(el("div", "co-label", "Candidates (" + s.cands.length + "), highest match first"));
       if (!s.cands.length) list.appendChild(el("p", "co-row-sub", "No matching jobs in the child groups."));
-      s.cands.forEach(function (c) {
-        var row = el("label", "co-row");
+      s.cands.forEach(function (c) { list.appendChild(coCard(c.it, c)); });
+      coUpdateGo();
+    }
+
+    // ---------- Pop-up card (parent/target when cand is null; candidate otherwise) ----------
+    // Same classes as the tab cards. Collapse state is kept in coSheetState.open, not in "collapsed",
+    // so the pop-up does not change the cards on the tab.
+    function coCard(it, cand) {
+      var s = coSheetState;
+      var f = fieldMap(it);
+      var card = el("div", "item co-card");
+      if (validHex(it.colorStatusColor)) card.style.setProperty("--gc", it.colorStatusColor);
+
+      // Top-right: Match Tier (+ No City) on candidates; nothing on the parent/target
+      if (cand) {
+        var tabs = el("div", "tabs");
+        var tt = el("div", "cs-tab");
+        tt.appendChild(el("span", null, "Match Tier"));
+        tt.appendChild(document.createTextNode(cand.tier + " " + cand.score));
+        var bg = CO_TIER_HEX[cand.tier] || "#c4c4c4";
+        tt.style.background = bg; tt.style.color = textOn(bg);
+        tt.title = "Match Tier: " + cand.tier + " (score " + cand.score + ")";
+        tabs.appendChild(tt);
+        if (cand.noCity) {
+          var nc = el("div", "cs-tab");
+          nc.appendChild(el("span", null, "City, State"));
+          nc.appendChild(document.createTextNode("No City"));
+          nc.style.background = "#c4c4c4"; nc.style.color = "#212121";
+          tabs.appendChild(nc);
+          card.classList.add("two-tabs");
+        }
+        card.appendChild(tabs);
+      } else {
+        card.classList.add("no-tabs");
+      }
+
+      // Header (left): checkbox + caret (candidates only), name, Sold To, City, group
+      var head = el("div", "item-head");
+      var hl = el("div", "head-left");
+      var bodyId = "coBody_" + it.id;
+      if (cand) {
         var cb = document.createElement("input");
         cb.type = "checkbox";
-        cb.checked = !!s.sel[c.it.id];
-        cb.setAttribute("aria-label", "Move " + c.it.name);
+        cb.className = "co-pick";
+        cb.checked = !!s.sel[it.id];
+        cb.setAttribute("aria-label", "Move " + it.name);
+        card.classList.toggle("co-picked", cb.checked);
         cb.addEventListener("change", function () {
-          if (cb.checked) s.sel[c.it.id] = true; else delete s.sel[c.it.id];
+          if (cb.checked) s.sel[it.id] = true; else delete s.sel[it.id];
+          card.classList.toggle("co-picked", cb.checked);
           $("coAll").checked = Object.keys(s.sel).length === s.cands.length;
           coUpdateGo();
         });
-        var main = el("div", "co-row-main");
-        main.appendChild(el("div", "co-row-name", c.it.name));
-        main.appendChild(el("div", "co-row-sub", (c.it.groupTitle || "") + "  \u00B7  " + dash(c.it.coSold) +
-          "  \u00B7  " + dash(c.it.coCity)));
-        var tags = el("div", "co-row-tags");
-        tags.appendChild(el("span", "co-tier " + CO_TIER_CLS[c.tier], c.tier + " " + c.score));
-        if (c.noCity) tags.appendChild(el("span", "co-tier co-tier-n", "No City"));
-        if (c.it.url) tags.appendChild(link("Open in monday", c.it.url));
-        main.appendChild(tags);
-        row.appendChild(cb);
-        row.appendChild(main);
-        list.appendChild(row);
+        hl.appendChild(cb);
+        // var caret = el("button", "caret", "\u25BE");
+        // caret.type = "button";
+        // caret.setAttribute("aria-controls", bodyId);
+        // caret.addEventListener("click", function () {
+        //   coSetOpen(card, it.id, card.classList.contains("collapsed"));
+        // });
+        // hl.appendChild(caret);
+      }
+      // Master Page: caret on every pop-up card (parent/target and candidates)
+      var caret = el("button", "caret", "\u25BE");
+      caret.type = "button";
+      caret.setAttribute("aria-controls", bodyId);
+      caret.addEventListener("click", function () {
+        coSetOpen(card, it.id, card.classList.contains("collapsed"));
       });
-      coUpdateGo();
+      hl.appendChild(caret);
+      var left = el("div");
+      var n = el("div", "item-name");
+      n.appendChild(link(it.name, it.srUrl || it.url));
+      n.title = it.srUrl ? "Open Service Request" : "Open in monday";
+      left.appendChild(n);
+      left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
+      left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
+      left.appendChild(el("div", "co-grp-line", it.groupTitle || ""));
+      // Master Page: monday item link on candidate cards
+      if (cand && it.url) {
+        var op = el("div", "co-open");
+        op.appendChild(link("Open in monday", it.url));
+        left.appendChild(op);
+      }
+      hl.appendChild(left);
+      head.appendChild(hl);
+      card.appendChild(head);
+
+      // Body (candidates only): same chips, field grid, and notes as the tab cards
+      // if (cand) {
+      //   var body = coBody(f);
+      //   body.id = bodyId;
+      //   card.appendChild(body);
+      //   coSetOpen(card, it.id, !!s.open[it.id]);   // start collapsed
+      // }
+      // Master Page: body on every pop-up card; all start collapsed
+      var body = coBody(f);
+      body.id = bodyId;
+      card.appendChild(body);
+      coSetOpen(card, it.id, !!s.open[it.id]);
+      return card;
+    }
+    function coSetOpen(card, id, open) {
+      if (coSheetState) { if (open) coSheetState.open[id] = true; else delete coSheetState.open[id]; }
+      card.classList.toggle("collapsed", !open);
+      var c = card.querySelector(".caret");
+      if (c) {
+        c.setAttribute("aria-expanded", open ? "true" : "false");
+        c.setAttribute("aria-label", (open ? "Collapse" : "Expand") + " details");
+        c.title = open ? "Hide details" : "Show details";
+      }
+    }
+    // Copy of the body section in renderItems (chips, GRID_STACKS, NOTE_COLS, HIDE_FIELD_IF_BLANK).
+    // If the tab card body changes, change this too.
+    function coBody(f) {
+      var body = el("div", "item-body");
+      var chips = el("div", "chips");
+      CHIP_COLS.forEach(function (id) {
+        var x = f[id]; if (!x) return;
+        var d = el("div");
+        d.appendChild(el("span", "label", x.title));
+        var txt = x.text || ((id === REVIEW_COL || id === TECH_APPROVED_COL) ? "Not Yet" : "");
+        var c = el("span", "chip", dash(txt));
+        if (txt && validHex(x.color)) { c.style.background = x.color; c.style.color = textOn(x.color); }
+        d.appendChild(c);
+        chips.appendChild(d);
+      });
+      body.appendChild(chips);
+      var vals = el("div", "vals");
+      var anyShown = false;
+      GRID_STACKS.forEach(function (stackIds) {
+        var st = el("div", "stack");
+        stackIds.forEach(function (id) {
+          var x = f[id]; if (!x) return;
+          if (hideIfBlank(id, x)) return;
+          var d = el("div");
+          d.appendChild(el("span", "label", x.title));
+          if (x.type === "link" && x.url) d.appendChild(link(x.text || x.url, x.url));
+          else if (x.type === "phone") d.appendChild(document.createTextNode(dash(fmtPhone(x.text))));
+          else d.appendChild(document.createTextNode(dash(x.text)));
+          st.appendChild(d);
+        });
+        if (st.childNodes.length) anyShown = true;
+        if (st.childNodes.length || KEEP_EMPTY_STACKS) vals.appendChild(st);
+      });
+      if (anyShown) body.appendChild(vals);
+      NOTE_COLS.forEach(function (id) {
+        var x = f[id]; if (!x) return;
+        if (hideIfBlank(id, x)) return;
+        var d = el("div", "notes");
+        d.appendChild(el("span", "label", x.title));
+        d.appendChild(document.createTextNode(dash(x.text)));
+        body.appendChild(d);
+      });
+      return body;
     }
 
     function coUpdateGo() {
