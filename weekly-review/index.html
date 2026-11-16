@@ -837,6 +837,34 @@
     @media (max-width: 480px) {
       .item.no-tabs { padding-top: 12px; }
     }
+    /* ---------- Master Page: sticky toolbar (pins under the tab bar) ---------- */
+    /* "top" is set by syncStickyTop() to the tab bar height; 62px is the fallback */
+    .sticky-tools {
+      position: sticky;
+      top: 62px;
+      z-index: 15;                 /* below the tab bar (20), above the cards */
+      margin: 0 -24px;             /* full width of .card-body (24px side padding) */
+      padding: 8px 24px 10px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+    }
+    .sticky-tools .page-nav:empty,
+    .sticky-tools .page-nav:not(:has(.btn:not(.hidden))) { margin-bottom: 0; }
+    /* ---------- Master Page: tab filters ---------- */
+    .filters { display: flex; flex-direction: column; gap: 6px; margin: 10px 0 0; }
+    .f-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .f-label { font-size: 11px; color: #9e9e9e; text-transform: uppercase; min-width: 110px; }
+    .f-chip {
+      padding: 4px 12px; border: 1px solid #ccc; border-radius: 14px; background: #fff;
+      color: #212121; font-family: inherit; font-size: 13px; cursor: pointer;
+    }
+    .f-chip.on { background: #1565c0; border-color: #1565c0; color: #fff; }
+    .f-chip:disabled { opacity: .45; cursor: default; }
+    .f-chip:focus-visible { outline: 3px solid #90caf9; outline-offset: 2px; }
+    .f-clear { align-self: flex-start; }
+    @media (max-width: 480px) {
+      .f-label { min-width: 0; width: 100%; }
+    }
     </style>
 </head>
 
@@ -870,6 +898,7 @@
         <!-- <div class="page-nav hidden" id="proceedTop">
                   <button type="button" class="btn btn-small" id="proceedTopBtn">Proceed -&gt;</button>
                 </div> -->
+        <div class="sticky-tools" id="stickyTools">
         <div class="page-nav" id="navTop">
           <!-- <button type="button" class="btn btn-small" id="navLastTop">&lt;- Last Week</button> -->
           <!-- <button type="button" class="btn btn-small" id="navThisTop">This Week -&gt;</button>  -->
@@ -894,6 +923,9 @@
             <button type="button" class="btn btn-small btn-outline hidden" id="refreshBtn">Refresh</button>
           </div>
         </div>
+        <!-- Master Page: filter chips (built by renderFilters)-->
+        <div class="filters hidden" id="filterBar" aria-label="Filters"></div>
+        </div> <!-- Master Page: end sticky-tools-->
         <p class="counts" id="counts" aria-live="polite"></p>
         <div id="itemList"></div>
       </div>
@@ -947,6 +979,47 @@
     // Master Page: Upcoming groups whose cards show the Tech Approved tab (top-right).
     // Add or remove group IDs here. Other Upcoming groups show no tab.
     var TECH_TAB_GROUPS = ["group_mkzz33yj"];   // Next Week (Locked)
+    // ---------- Master Page: tab filters ----------
+    var TECH_COL = "multiple_person_mm1jx2c0";   // Tech (people column)
+    // One entry per filter row. "options" = multi-select chips; "toggle" = one on/off chip.
+    // values(it) returns the card's value(s); a card passes a row when any value is a selected chip.
+    // needCounts = waits for Group Orders match counting; sort = orders cards, does not hide them.
+    // A tab with no entry here (Upcoming) has no filter bar.
+    var FILTER_DEFS = {
+      last: [
+        {
+          key: "order", label: "Order Status", options: ["Open", "Reported"],
+          values: function (it) { return [colText(it, ORDER_COL, ORDER_DEFAULT)]; }
+        },
+        {
+          key: "review", label: "Review Status", options: ["Approved", "Not Yet"],
+          values: function (it) { return [colText(it, REVIEW_COL, "Not Yet")]; }
+        }
+      ],
+      current: [
+        {
+          key: "techApproved", label: "Tech Approved", options: ["Not Yet", "Approved", "Issue"],
+          values: function (it) { return [colText(it, TECH_APPROVED_COL, "Not Yet")]; }
+        },
+        {
+          key: "tech", label: "Tech",
+          options: TECH_LINKS.map(function (t) { return t.name; }).concat(["Unassigned"]),
+          values: function (it) { return techNames(it); }
+        }
+      ],
+      groups: [
+        {
+          key: "groupable", label: "Show", toggle: "Hide no matches / moved", needCounts: true,
+          test: function (it) { return !coMoved[it.id] && (it.coParent || it.coChild) && coHasCands(it.id); }
+        },
+        {
+          key: "multi", label: "Matches", toggle: "Multiple matches only", needCounts: true,
+          test: function (it) { return coMultiCount(it.id) >= CO_MULTI_MIN; }
+        },
+        { key: "sort", label: "Sort", toggle: "Most matches first", needCounts: true, sort: true }
+      ]
+    };
+    var filterState = { last: {}, current: {}, groups: {} };   // tab -> key -> { option: true }; reset on page reload
     var SOLD_TO_COL = "text_mm1b4w1t";         // header left
     var CITY_COL = "text_mm1dy2mz";            // header left
     var CHIP_COLS = ["color_mm1c7719", "color_mm1jzrpg", "color_mm8dp78e"];
@@ -1448,6 +1521,7 @@
       data = pages[page].data;
       collapsed = pages[page].collapsed;
       showPage(page);
+      renderFilters();  // Master Page: filter chips for this tab (hidden on Upcoming)
       $("results").classList.add("hidden");
       $("backBtn").classList.add("hidden");
       if (page === "last") renderLast();
@@ -1545,6 +1619,10 @@
       head.setAttribute("aria-controls", bodyId);
       head.appendChild(el("span", "grp-caret", "\u25BE"));
       head.appendChild(el("span", null, sec.title));
+      // head.appendChild(el("span", "grp-count", (sec.items || []).length + " job(s)"));
+      // Master Page: "X of Y job(s)" when filters hide cards in this group
+      var nShown = (sec.items || []).length;
+      var nTotal = (sec.total != null) ? sec.total : nShown;
       head.appendChild(el("span", "grp-count", (sec.items || []).length + " job(s)"));
       var box = el("div", "grp-body");
       box.id = bodyId;
@@ -1571,9 +1649,18 @@
       var osDefaultBg = page === "last" ? orderDefaultColor() : "";
       // Master Page: Upcoming and Group Orders are drawn as one section per group; other tabs are one flat list.
       var secs = data.sections || [{ items: data.items }];
+      // secs.forEach(function (sec) {
+      //   var target = data.sections ? sectionBox(sec, list) : list;
+      //   sec.items.forEach(function (it) {
+      // Master Page: filters and sort. A section with no matching cards is not drawn while filters are on.
+      var fOn = filtersActive();
       secs.forEach(function (sec) {
-        var target = data.sections ? sectionBox(sec, list) : list;
-        sec.items.forEach(function (it) {
+        var shown = viewItems(sec.items || []);
+        if (data.sections && fOn && !shown.length) return;
+        var target = data.sections
+          ? sectionBox({ id: sec.id, title: sec.title, color: sec.color, items: shown, total: (sec.items || []).length }, list)
+          : list;
+        shown.forEach(function (it) {
           var f = fieldMap(it);
           // var disabled = !!it.approved;
           // var readOnly = page === "last";                // Last Week Review: no choices, never greyed out
@@ -1771,6 +1858,7 @@
           target.appendChild(item);
         });
       });   // Master Page: end of sections loop
+      if (fOn && !list.childNodes.length) list.appendChild(el("p", "note", "No jobs match the filters."));
       updateCounts();
       refreshToggle();
     }
@@ -1823,6 +1911,105 @@
       }
       refreshToggle();
     }
+
+    // ---------- Master Page: tab filters ----------
+    function colText(it, col, dflt) {
+      var x = fieldMap(it)[col];
+      var t = (x && x.text) ? String(x.text).trim() : "";
+      return t || dflt;
+    }
+    // Tech names on the card (monday people text is "Name A, Name B"); none = "Unassigned"
+    function techNames(it) {
+      var t = colText(it, TECH_COL, "");
+      var names = t ? t.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
+      return names.length ? names : ["Unassigned"];
+    }
+    function defOn(p, d) {
+      var s = (filterState[p] || {})[d.key];
+      return !!s && Object.keys(s).length > 0;
+    }
+    // Any chip on for that tab (filters or sort)
+    function anyOn(p) {
+      return (FILTER_DEFS[p] || []).some(function (d) { return defOn(p, d); });
+    }
+    // A filter (not the sort) is on and can be applied now
+    function filtersActive() {
+      return (FILTER_DEFS[page] || []).some(function (d) {
+        return !d.sort && defOn(page, d) && (!d.needCounts || coCountDone);
+      });
+    }
+    function passes(it) {
+      var defs = FILTER_DEFS[page]; if (!defs) return true;
+      var st = filterState[page];
+      return defs.every(function (d) {
+        if (d.sort || !defOn(page, d)) return true;
+        if (d.needCounts && !coCountDone) return true;   // not applied until counting is done
+        if (d.toggle) return d.test(it);
+        return d.values(it).some(function (v) { return !!st[d.key][v]; });
+      });
+    }
+    // Cards to draw: filtered, then sorted (Group Orders "Most matches first", ties keep board order)
+    function viewItems(items) {
+      var out = items.filter(passes);
+      var sortDef = (FILTER_DEFS[page] || []).filter(function (d) { return d.sort; })[0];
+      if (sortDef && defOn(page, sortDef) && coCountDone) {
+        out = out.map(function (it, i) { return { it: it, i: i }; })
+          .sort(function (a, b) { return (coMultiCount(b.it.id) - coMultiCount(a.it.id)) || (a.i - b.i); })
+          .map(function (x) { return x.it; });
+      }
+      return out;
+    }
+    function renderFilters() {
+      var bar = $("filterBar"); if (!bar) return;
+      bar.textContent = "";
+      var defs = FILTER_DEFS[page];
+      bar.classList.toggle("hidden", !defs);
+      if (!defs) return;
+      var st = filterState[page];
+      defs.forEach(function (d) {
+        var row = el("div", "f-row");
+        row.setAttribute("role", "group");
+        row.setAttribute("aria-label", d.label);
+        row.appendChild(el("span", "f-label", d.label));
+        var wait = d.needCounts && !coCountDone;
+        (d.toggle ? [d.toggle] : d.options).forEach(function (o) {
+          var on = !!(st[d.key] && st[d.key][o]);
+          var b = el("button", "f-chip" + (on ? " on" : ""), o);
+          b.type = "button";
+          b.setAttribute("aria-pressed", on ? "true" : "false");
+          b.disabled = wait;
+          if (wait) b.title = "Counting matches\u2026";
+          b.addEventListener("click", function () { toggleFilter(d.key, o); });
+          row.appendChild(b);
+        });
+        bar.appendChild(row);
+      });
+      var clr = el("button", "btn btn-small btn-outline f-clear", "Clear filters");
+      clr.type = "button";
+      clr.disabled = !anyOn(page);
+      clr.addEventListener("click", clearFilters);
+      bar.appendChild(clr);
+    }
+    function toggleFilter(key, opt) {
+      var st = filterState[page];
+      st[key] = st[key] || {};
+      if (st[key][opt]) delete st[key][opt]; else st[key][opt] = true;
+      applyFilters();
+    }
+    function clearFilters() {
+      filterState[page] = {};
+      applyFilters();
+    }
+    function applyFilters() {
+      if (busy || !data) return;
+      renderFilters();
+      renderItems();
+      if (page === "current") updateReviewBtn();
+      if (page === "upcoming" || page === "groups") refreshGroupsBtn();
+    }
+    // This Week: jobs not yet approved that pass the filters (Approve All / Clear All use these)
+    function availableShown() { return available().filter(passes); }    
+
     // ---------- Expand All / Collapse All (all cards, including greyed-out ones) ----------
     function allCards() { return Array.prototype.slice.call($("itemList").querySelectorAll(".item")); }
     function anyCollapsed(cards) {
@@ -1865,6 +2052,7 @@
     function available() { return data.items.filter(function (it) { return !it.approved; }); }
     function selected() { return available().filter(function (it) { return choices[it.id] === "approve"; }); }
 
+    /*
     function updateCounts() {
       if (!data) return;
       if (page === "last") {
@@ -1878,12 +2066,31 @@
       $("counts").textContent = data.items.length + " item(s), " + available().length + " awaiting review, " +
         selected().length + " selected to approve.";
     }
+    */
+    function updateCounts() {
+      if (!data) return;
+      var pre = filtersActive() ? "Showing " + data.items.filter(passes).length + " of " : "";   // Master Page
+      if (page === "last") {
+        $("counts").textContent = pre + data.items.length + " job(s) scheduled " + data.weekText + ".";
+        return;
+      }
+      if (page === "upcoming" || page === "groups") {
+        $("counts").textContent = pre + data.items.length + " job(s) in " + (data.sections || []).length + " group(s).";
+        return;
+      }
+      // "selected to approve" includes selections on cards hidden by filters (they are still submitted)
+      $("counts").textContent = pre + data.items.length + " item(s), " + available().length + " awaiting review, " +
+        selected().length + " selected to approve.";
+    }
+
     function updateReviewBtn() {
       $("reviewBtn").disabled = busy || selected().length === 0;
-      $("approveAllBtn").disabled = busy || available().length === 0;
+      // $("approveAllBtn").disabled = busy || available().length === 0;
+      $("approveAllBtn").disabled = busy || availableShown().length === 0;   // Master Page: visible cards only
       $("approveAllBtn").textContent = allPicked() ? "Clear All" : "Approve All";
       updateCounts();
     }
+    /*
     function allPicked() {
       var a = available();
       return a.length > 0 && a.every(function (it) { return choices[it.id] === "approve"; });
@@ -1900,6 +2107,25 @@
       renderItems();
       updateReviewBtn();
     }
+    */
+    // Master Page: Approve All / Clear All act on cards that pass the filters.
+    // Selections on hidden cards are kept and are still submitted.
+    function allPicked() {
+      var a = availableShown();
+      return a.length > 0 && a.every(function (it) { return choices[it.id] === "approve"; });
+    }
+    function approveAll() {
+      if (allPicked()) {
+        availableShown().forEach(function (it) { delete choices[it.id]; collapsed[it.id] = false; });
+        renderItems();
+        updateReviewBtn();
+        return;
+      }
+      availableShown().forEach(function (it) { choices[it.id] = "approve"; collapsed[it.id] = true; });
+      renderItems();
+      updateReviewBtn();
+    }
+
 
     // ---------- Confirm ----------
     function openConfirm() {
@@ -1960,6 +2186,11 @@
       $("backBtn").classList.remove("hidden");
     }
 
+    // Master Page: pin the sticky toolbar directly under the tab bar (1 row desktop, 2 rows mobile)
+    function syncStickyTop() {
+      var tb =$("tabBar"), st = $("stickyTools");
+      if  (tb && st) st.style.top = tb.offsetHeight + "px";
+    }
     // ---------- Init ----------
     (function init() {
       var sel = $("whoSelect");
@@ -2006,6 +2237,8 @@
       //load();
       //loadLast();
       //prefetchUpcoming();
+      syncStickyTop();
+      window.addEventListener("resize", syncStickyTop);
       showPage("last");
       loadLast();   // Last Week Review is shown first
       load();       // This Week + Upcoming load in the background (Group Orders loads when its tab is selected)
@@ -2021,6 +2254,7 @@
     var CO_BADGE_TIERS = ["Match", "Possible", "Other City"];
     // Tiers listed in the candidate sheet. Remove a name to hide those candidates.
     var CO_LIST_TIERS = ["Match", "Possible", "Other City"];
+    var CO_MULTI_MIN = 2;
     var CO_TIER_CODE = { "Match": "M", "Possible": "P", "Other City": "O" };
     var CO_TIER_CLS = { "Match": "co-tier-m", "Possible": "co-tier-p", "Other City": "co-tier-o" };
     // Match Tier tab colors on candidate cards (same as the .co-tier-* badge colors)
@@ -2031,6 +2265,7 @@
     var coPairCache = {};         // "idA|idB" -> classify result (null = no match)
     var coCounts = {};            // itemId -> { "Match": n, ... }
     var coGen = 0;                // stops an old badge count when the data reloads
+    var coCountDone = false;      // Master Page: true when coCounts is complete (group Orders filters are enabledS)
     var coSheetState = null;      // { dest, cands, sel, done }
 
     function coIndex(sections) {
@@ -2120,6 +2355,7 @@
     }
 
     // ---------- Badges (counted in small steps so the page stays responsive) ----------
+    /*
     function coRecount() {
       var gen = ++coGen;
       coCounts = {};
@@ -2138,6 +2374,41 @@
         if (i < dests.length) setTimeout(step, 0);
       })();
     }
+    */
+    function coRecount() {
+      var gen = ++coGen;
+      coCounts = {};
+      coCountDone = false;   // Master Page: Group Orders filter chips are disabled until counting is done
+      if (isOn("groups") && !$("review").classList.contains("hidden")) renderFilters();
+      var dests = coItems.filter(function (it) { return (it.coParent || it.coChild) && !coMoved[it.id]; });
+      var i = 0;
+      (function step() {
+        if (gen !== coGen) return;
+        var t0 = Date.now();
+        while (i < dests.length && Date.now() - t0 < 30) {
+          var d = dests[i++], n = {};
+          coCandidates(d).forEach(function (c) { n[c.tier] = (n[c.tier] || 0) + 1; });
+          coCounts[d.id] = n;
+          var b = $("coBadge_" + d.id);
+          if (b) coFillBadge(b, d.id);
+        }
+        if (i < dests.length) setTimeout(step, 0);
+        else coOnCountDone();
+      })();
+    }
+    // Master Page: enable the Group Orders chips; redraw when a Group Orders filter or the sort is on
+    function coOnCountDone() {
+      coCountDone = true;
+      if (!isOn("groups") || busy || !pages.groups.data || $("review").classList.contains("hidden")) return;
+      renderFilters();
+      if (anyOn("groups")) { renderItems(); refreshGroupsBtn(); }
+    }
+    // Match + Possible count for a card (0 while counting or for moved cards)
+    function coMultiCount(id) {
+      var n = coCounts[id];
+      return n ? (n["Match"] || 0) + (n["Possible"] || 0) : 0;
+    }
+
     // true when the card has at least one candidate the pop-up would list
     function coHasCands(id) {
       var n = coCounts[id];
