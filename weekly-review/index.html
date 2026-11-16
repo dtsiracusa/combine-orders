@@ -46,13 +46,15 @@
       max-width: 900px;
       width: 94%;
       overflow: hidden;
-      overflow: clip;   /* Master Page: clip keeps the rounded corners but lets the tab bar stick; older browsers use hidden */
+      overflow: clip;
+      /* Master Page: clip keeps the rounded corners but lets the tab bar stick; older browsers use hidden */
     }
 
     .card-header {
       padding: 28px 24px 16px;
       text-align: center;
-      position: relative; /* anchors the tech page menu */
+      position: relative;
+      /* anchors the tech page menu */
     }
 
     .icon {
@@ -767,6 +769,55 @@
         margin-left: 0;
       }
     }
+    /* ---------- Master Page: Group Orders combine ---------- */
+    /* #0073ea = same blue as the tab bar; change here if needed */
+    .co-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+    .co-btn {
+      padding: 6px 12px; font-size: 14px; font-family: inherit; cursor: pointer;
+      border: 1px solid #0073ea; background: #0073ea; color: #fff; border-radius: 5px;
+    }
+    .co-btn:disabled { opacity: .5; cursor: default; }
+    .co-btn-outline { background: #fff; color: #0073ea; }
+    .co-btn:focus-visible, .co-close:focus-visible { outline: 2px solid #333; outline-offset: 2px; }
+    .co-badge { display: flex; flex-wrap: wrap; gap: 4px; font-size: 12px; color: #555; }
+    .co-tier { padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .co-tier-m { background: #00c875; color: #fff; }
+    .co-tier-p { background: #fdab3d; color: #1f1f1f; }
+    .co-tier-o { background: #a25ddc; color: #fff; }
+    .co-tier-n { background: #c4c4c4; color: #1f1f1f; }
+    .co-moved { font-size: 13px; color: #555; }
+    .co-sheet {
+      position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, .45);
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    .co-sheet.hidden { display: none; }
+    .co-panel {
+      background: #fff; width: 100%; max-width: 720px; max-height: 90%;
+      display: flex; flex-direction: column; border-radius: 12px 12px 0 0;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, .2);
+    }
+    .co-head { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+               padding: 12px 16px; border-bottom: 1px solid #e6e6e6; }
+    .co-head h2 { margin: 0; font-size: 17px; word-break: break-word; }
+    .co-close { border: none; background: none; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; }
+    .co-dest { padding: 10px 16px; font-size: 14px; background: #f5f6f8; }
+    .co-dest div + div { margin-top: 4px; }
+    .co-tools { display: flex; justify-content: space-between; align-items: center; gap: 8px;
+                padding: 8px 16px; font-size: 14px; }
+    .co-list { overflow-y: auto; padding: 0 16px; flex: 1 1 auto; }
+    .co-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .co-row input[type="checkbox"] { width: 20px; height: 20px; margin-top: 2px; flex: none; }
+    .co-row-main { flex: 1; min-width: 0; }
+    .co-row-name { font-weight: 600; word-break: break-word; }
+    .co-row-sub { font-size: 13px; color: #555; word-break: break-word; }
+    .co-row-tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 4px; font-size: 13px; }
+    .co-msg { padding: 8px 16px; font-size: 14px; color: #b00020; white-space: pre-line; }
+    .co-msg:empty { display: none; }
+    .co-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid #e6e6e6; }
+    @media (min-width: 721px) {
+      .co-sheet { align-items: center; }
+      .co-panel { border-radius: 12px; }
+    }
   </style>
 </head>
 
@@ -785,10 +836,14 @@
     </div>
     <!-- Master Page tabs -->
     <div class="tabbar" id="tabBar" role="tablist" aria-label="Pages">
-      <button type="button" class="tab-btn" role="tab" id="tab_last" data-page="last" aria-selected="false">Last Week</button>
-      <button type="button" class="tab-btn" role="tab" id="tab_current" data-page="current" aria-selected="false">This Week</button>
-      <button type="button" class="tab-btn" role="tab" id="tab_upcoming" data-page="upcoming" aria-selected="false">Upcoming</button>
-      <button type="button" class="tab-btn" role="tab" id="tab_groups" data-page="groups" aria-selected="false">Group Orders</button>
+      <button type="button" class="tab-btn" role="tab" id="tab_last" data-page="last" aria-selected="false">Last
+        Week</button>
+      <button type="button" class="tab-btn" role="tab" id="tab_current" data-page="current" aria-selected="false">This
+        Week</button>
+      <button type="button" class="tab-btn" role="tab" id="tab_upcoming" data-page="upcoming"
+        aria-selected="false">Upcoming</button>
+      <button type="button" class="tab-btn" role="tab" id="tab_groups" data-page="groups" aria-selected="false">Group
+        Orders</button>
     </div>
     <div class="card-body">
       <p class="message" id="message">Please wait while the items are loaded.</p>
@@ -804,14 +859,19 @@
         <!-- </div> --><!-- Master Page: extra close tag. It closed #review early and pushed the footer outside the card (card shifted left). -->
         <div class="toolbar">
           <div class="who" id="whoBox">
-            <label for="whoSelect">Confirmed by:</label>
-            <select id="whoSelect"></select>
+            <!-- <label for="whoSelect">Confirmed by:</label> -->
+            <!-- <select id="whoSelect"></select> -->
+            <!-- Master Page: select kept (hidden) so existing code still reads whoSelect.value (CONFIRMERS[0]) -->
+            <select id="whoSelect" class="hidden" aria-hidden="true" tabindex="-1"></select>
+            <span>Confirmer: Joshua McCann</span>
           </div>
           <!-- <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button> -->
           <div class="tb-right">
             <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
-            <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn" aria-controls="itemList">Collapse All</button>
-            <button type="button" class="btn btn-small btn-outline hidden" id="groupsBtn" aria-controls="itemList">Collapse Groups</button>
+            <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn" aria-controls="itemList">Collapse
+              All</button>
+            <button type="button" class="btn btn-small btn-outline hidden" id="groupsBtn"
+              aria-controls="itemList">Collapse Groups</button>
             <button type="button" class="btn btn-small btn-outline hidden" id="refreshBtn">Refresh</button>
           </div>
         </div>
@@ -947,36 +1007,36 @@
       $("title").textContent = title;
       $("message").textContent = message || "";
       $("message").classList.toggle("hidden", !message);
-        // document.title = title + " — Wieland Healthcare";
-        document.title = "Wieland Healthcare — Master Page" + (title ? " — " + title : "");
-        closeMenu();
-        $("techMenu").classList.add("hidden");   // shown again only when cards are on screen
-      }
-      function spinner(title, msg) { setState("loading", '<div class="spinner"></div>', title, msg); }
+      // document.title = title + " — Wieland Healthcare";
+      document.title = "Wieland Healthcare — Master Page" + (title ? " — " + title : "");
+      closeMenu();
+      $("techMenu").classList.add("hidden");   // shown again only when cards are on screen
+    }
+    function spinner(title, msg) { setState("loading", '<div class="spinner"></div>', title, msg); }
 
-      // ---------- Tech page menu ----------
-      function buildMenu() {
-        var list = $("menuList");
-        list.appendChild(el("div", "menu-head", "Tech pages"));
-        TECH_LINKS.forEach(function (t) {
-          var a = el("a", null, t.name);
-          a.href = t.link; a.target = "_blank"; a.rel = "noopener";
-          a.setAttribute("role", "menuitem");
-          a.addEventListener("click", closeMenu);
-          list.appendChild(a);
-        });
-      }
-      function openMenu() {
-        $("menuList").classList.remove("hidden");
-        $("menuBtn").setAttribute("aria-expanded", "true");
-        var first = $("menuList").querySelector("a");
-        if (first) first.focus();
-      }
-      function closeMenu() {
-        $("menuList").classList.add("hidden");
-        $("menuBtn").setAttribute("aria-expanded", "false");
-      }
-      function showMenu() { $("techMenu").classList.toggle("hidden", !TECH_LINKS.length); }
+    // ---------- Tech page menu ----------
+    function buildMenu() {
+      var list = $("menuList");
+      list.appendChild(el("div", "menu-head", "Tech pages"));
+      TECH_LINKS.forEach(function (t) {
+        var a = el("a", null, t.name);
+        a.href = t.link; a.target = "_blank"; a.rel = "noopener";
+        a.setAttribute("role", "menuitem");
+        a.addEventListener("click", closeMenu);
+        list.appendChild(a);
+      });
+    }
+    function openMenu() {
+      $("menuList").classList.remove("hidden");
+      $("menuBtn").setAttribute("aria-expanded", "true");
+      var first = $("menuList").querySelector("a");
+      if (first) first.focus();
+    }
+    function closeMenu() {
+      $("menuList").classList.add("hidden");
+      $("menuBtn").setAttribute("aria-expanded", "false");
+    }
+    function showMenu() { $("techMenu").classList.toggle("hidden", !TECH_LINKS.length); }
     function el(tag, cls, text) {
       var e = document.createElement(tag);
       if (cls) e.className = cls;
@@ -1351,6 +1411,8 @@
       }
       pages.groups.data = sectionData(res.sections || []);
       pages.groups.collapsed = {};
+      coIndex(res.sections || []);  //Master Page: Group Orders combine
+      coRecount();
       if (isOn("groups")) renderPage();
     }
 
@@ -1488,112 +1550,98 @@
       // Master Page: Upcoming and Group Orders are drawn as one section per group; other tabs are one flat list.
       var secs = data.sections || [{ items: data.items }];
       secs.forEach(function (sec) {
-      var target = data.sections ? sectionBox(sec, list) : list;
-      sec.items.forEach(function (it) {
-        var f = fieldMap(it);
-        // var disabled = !!it.approved;
-        // var readOnly = page === "last";                // Last Week Review: no choices, never greyed out
-        var readOnly = page !== "current";             // only This Week has choices; view-only tabs are never greyed out
-        var disabled = !readOnly && !!it.approved;
-        var item = el("div", "item" + (disabled ? " disabled" : ""));
-        item.setAttribute("data-id", it.id);
-        if (validHex(it.colorStatusColor)) item.style.setProperty("--gc", it.colorStatusColor);
+        var target = data.sections ? sectionBox(sec, list) : list;
+        sec.items.forEach(function (it) {
+          var f = fieldMap(it);
+          // var disabled = !!it.approved;
+          // var readOnly = page === "last";                // Last Week Review: no choices, never greyed out
+          var readOnly = page !== "current";             // only This Week has choices; view-only tabs are never greyed out
+          var disabled = !readOnly && !!it.approved;
+          var item = el("div", "item" + (disabled ? " disabled" : ""));
+          item.setAttribute("data-id", it.id);
+          if (validHex(it.colorStatusColor)) item.style.setProperty("--gc", it.colorStatusColor);
 
-        // Top-right: Order Status tab (Last Week Review only) and Review Status tab, side by side
-        var tabs = el("div", "tabs");
-        // if (readOnly) {
-        if (page === "last") {
-          var os = f[ORDER_COL] || {};
-          var osText = os.text || ORDER_DEFAULT;
-          var osTab = el("div", "cs-tab");
-          osTab.appendChild(el("span", null, os.title || "Order Status"));
-          osTab.appendChild(document.createTextNode(osText));
-          var osBg = (os.text && validHex(os.color)) ? os.color : osDefaultBg;
-          osTab.style.background = osBg; osTab.style.color = textOn(osBg);
-          osTab.title = "Order Status: " + osText;
-          tabs.appendChild(osTab);
-          item.classList.add("two-tabs");
-        }
+          // Top-right: Order Status tab (Last Week Review only) and Review Status tab, side by side
+          var tabs = el("div", "tabs");
+          // if (readOnly) {
+          if (page === "last") {
+            var os = f[ORDER_COL] || {};
+            var osText = os.text || ORDER_DEFAULT;
+            var osTab = el("div", "cs-tab");
+            osTab.appendChild(el("span", null, os.title || "Order Status"));
+            osTab.appendChild(document.createTextNode(osText));
+            var osBg = (os.text && validHex(os.color)) ? os.color : osDefaultBg;
+            osTab.style.background = osBg; osTab.style.color = textOn(osBg);
+            osTab.title = "Order Status: " + osText;
+            tabs.appendChild(osTab);
+            item.classList.add("two-tabs");
+          }
 
-        // Top-right: Review Status tab
-        var rv = f[REVIEW_COL] || {};
+          // Top-right: Review Status tab
+          var rv = f[REVIEW_COL] || {};
 
-        var rvText = rv.text || "Not Yet";
-        var tab = el("div", "cs-tab");
-        tab.appendChild(el("span", null, "Review Status"));
-        tab.appendChild(document.createTextNode(rvText));
-        var bg = (rv.text && validHex(rv.color)) ? rv.color : "#c4c4c4";
-        tab.style.background = bg; tab.style.color = textOn(bg);
-        tab.title = "Review Status: " + rvText;
-        // item.appendChild(tab);
-        tabs.appendChild(tab);
-        item.appendChild(tabs);
+          var rvText = rv.text || "Not Yet";
+          var tab = el("div", "cs-tab");
+          tab.appendChild(el("span", null, "Review Status"));
+          tab.appendChild(document.createTextNode(rvText));
+          var bg = (rv.text && validHex(rv.color)) ? rv.color : "#c4c4c4";
+          tab.style.background = bg; tab.style.color = textOn(bg);
+          tab.title = "Review Status: " + rvText;
+          // item.appendChild(tab);
+          tabs.appendChild(tab);
+          item.appendChild(tabs);
 
-        // Header (left): caret, item name, Sold To, City
-        var head = el("div", "item-head");
-        var headLeft = el("div", "head-left");
-        var bodyId = "body_" + it.id;
-        var caret = el("button", "caret", "\u25BE");
-        caret.type = "button";
-        caret.setAttribute("aria-controls", bodyId);
-        caret.addEventListener("click", function () {
-          setCollapsed(item, it.id, !item.classList.contains("collapsed"));
-        });
-        headLeft.appendChild(caret);
-        var left = el("div");
-        var n = el("div", "item-name");
-        // n.appendChild(link(it.name, it.srUrl || it.url));
-        // n.title = it.srUrl ? "Open Service Request" : "Open in monday";
-        // if (readOnly) {
-        if (page === "last") {
-          n.appendChild(link(it.name, it.visitUrl));     // plain text when Tech Visit is blank
-          if (it.visitUrl) n.title = "Open Tech Visit";
-        } else {
-          n.appendChild(link(it.name, it.srUrl || it.url));
-          n.title = it.srUrl ? "Open Service Request" : "Open in monday";
-        }
-        left.appendChild(n);
-        left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
-        left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
-        headLeft.appendChild(left);
-        head.appendChild(headLeft);
-        item.appendChild(head);
-        // Collapsible body: chips, field grid, notes
-        var body = el("div", "item-body");
-        body.id = bodyId;
+          // Header (left): caret, item name, Sold To, City
+          var head = el("div", "item-head");
+          var headLeft = el("div", "head-left");
+          var bodyId = "body_" + it.id;
+          var caret = el("button", "caret", "\u25BE");
+          caret.type = "button";
+          caret.setAttribute("aria-controls", bodyId);
+          caret.addEventListener("click", function () {
+            setCollapsed(item, it.id, !item.classList.contains("collapsed"));
+          });
+          headLeft.appendChild(caret);
+          var left = el("div");
+          var n = el("div", "item-name");
+          // n.appendChild(link(it.name, it.srUrl || it.url));
+          // n.title = it.srUrl ? "Open Service Request" : "Open in monday";
+          // if (readOnly) {
+          if (page === "last") {
+            n.appendChild(link(it.name, it.visitUrl));     // plain text when Tech Visit is blank
+            if (it.visitUrl) n.title = "Open Tech Visit";
+          } else {
+            n.appendChild(link(it.name, it.srUrl || it.url));
+            n.title = it.srUrl ? "Open Service Request" : "Open in monday";
+          }
+          left.appendChild(n);
+          left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
+          left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
+          headLeft.appendChild(left);
+          head.appendChild(headLeft);
+          item.appendChild(head);
+          // Collapsible body: chips, field grid, notes
+          var body = el("div", "item-body");
+          body.id = bodyId;
 
-        // Status chips
-        var chips = el("div", "chips");
-        CHIP_COLS.forEach(function (id) {
-          var x = f[id]; if (!x) return;
-          var d = el("div");
-          d.appendChild(el("span", "label", x.title));
-          var txt = x.text || ((id === REVIEW_COL || id === TECH_APPROVED_COL) ? "Not Yet" : "");
-          var c = el("span", "chip", dash(txt));
-          if (txt && validHex(x.color)) { c.style.background = x.color; c.style.color = textOn(x.color); }
-          d.appendChild(c);
-          chips.appendChild(d);
-        });
-        body.appendChild(chips);
+          // Status chips
+          var chips = el("div", "chips");
+          CHIP_COLS.forEach(function (id) {
+            var x = f[id]; if (!x) return;
+            var d = el("div");
+            d.appendChild(el("span", "label", x.title));
+            var txt = x.text || ((id === REVIEW_COL || id === TECH_APPROVED_COL) ? "Not Yet" : "");
+            var c = el("span", "chip", dash(txt));
+            if (txt && validHex(x.color)) { c.style.background = x.color; c.style.color = textOn(x.color); }
+            d.appendChild(c);
+            chips.appendChild(d);
+          });
+          body.appendChild(chips);
 
-        // Field grid in GRID_COLS order (Review Status and Service Request are not listed)
-        var vals = el("div", "vals");
-        /*
-        GRID_COLS.forEach(function (id) {
-          var x = f[id]; if (!x) return;
-          if (hideIfBlank(id, x)) return;
-          var d = el("div");
-          d.appendChild(el("span", "label", x.title));
-          if (x.type === "link" && x.url) d.appendChild(link(x.text || x.url, x.url));
-          else if (x.type === "phone") d.appendChild(document.createTextNode(dash(fmtPhone(x.text))));
-          else d.appendChild(document.createTextNode(dash(x.text)));
-          vals.appendChild(d);
-        });
-        */
-        var anyShown = false;
-        GRID_STACKS.forEach(function (stackIds) {
-          var s = el("div", "stack");
-          stackIds.forEach(function (id) {
+          // Field grid in GRID_COLS order (Review Status and Service Request are not listed)
+          var vals = el("div", "vals");
+          /*
+          GRID_COLS.forEach(function (id) {
             var x = f[id]; if (!x) return;
             if (hideIfBlank(id, x)) return;
             var d = el("div");
@@ -1601,78 +1649,94 @@
             if (x.type === "link" && x.url) d.appendChild(link(x.text || x.url, x.url));
             else if (x.type === "phone") d.appendChild(document.createTextNode(dash(fmtPhone(x.text))));
             else d.appendChild(document.createTextNode(dash(x.text)));
-            s.appendChild(d);
+            vals.appendChild(d);
           });
-          if (s.childNodes.length) anyShown = true;
-          if (s.childNodes.length || KEEP_EMPTY_STACKS) vals.appendChild(s);
-        });
-        // body.appendChild(vals);
-        // if (vals.childNodes.length) body.appendChild(vals);
-        if (anyShown) body.appendChild(vals);
+          */
+          var anyShown = false;
+          GRID_STACKS.forEach(function (stackIds) {
+            var s = el("div", "stack");
+            stackIds.forEach(function (id) {
+              var x = f[id]; if (!x) return;
+              if (hideIfBlank(id, x)) return;
+              var d = el("div");
+              d.appendChild(el("span", "label", x.title));
+              if (x.type === "link" && x.url) d.appendChild(link(x.text || x.url, x.url));
+              else if (x.type === "phone") d.appendChild(document.createTextNode(dash(fmtPhone(x.text))));
+              else d.appendChild(document.createTextNode(dash(x.text)));
+              s.appendChild(d);
+            });
+            if (s.childNodes.length) anyShown = true;
+            if (s.childNodes.length || KEEP_EMPTY_STACKS) vals.appendChild(s);
+          });
+          // body.appendChild(vals);
+          // if (vals.childNodes.length) body.appendChild(vals);
+          if (anyShown) body.appendChild(vals);
 
-        // Notes (full width)
-        NOTE_COLS.forEach(function (id) {
-          var x = f[id]; if (!x) return;
-          if (hideIfBlank(id, x)) return;
-          var d = el("div", "notes");
-          d.appendChild(el("span", "label", x.title));
-          d.appendChild(document.createTextNode(dash(x.text)));
-          body.appendChild(d);
-        });
-        item.appendChild(body);
-        setCollapsed(item, it.id, isCollapsed(it));
+          // Notes (full width)
+          NOTE_COLS.forEach(function (id) {
+            var x = f[id]; if (!x) return;
+            if (hideIfBlank(id, x)) return;
+            var d = el("div", "notes");
+            d.appendChild(el("span", "label", x.title));
+            d.appendChild(document.createTextNode(dash(x.text)));
+            body.appendChild(d);
+          });
+          item.appendChild(body);
+          setCollapsed(item, it.id, isCollapsed(it));
 
-        // Choices or note
-        if (readOnly) {
-          // Last Week Review: view only, no choices
-          // Upcoming / Group Orders: view only; show who approved when Review Status is Approved
-          if (page !== "last" && it.approved) item.appendChild(el("div", "note", it.note || "Already Approved."));
-        } else if (disabled) {
-          item.appendChild(el("div", "note", it.note || "Already Approved."));
-        } else {
-          /*
-          var ch = el("div", "choices");
-          ch.setAttribute("role", "radiogroup");
-          ch.setAttribute("aria-label", "Review for " + it.name);
-          [["approve", "Approve"], ["leave", "Leave as is"]].forEach(function (o) {
-            var lab = el("label");
-            var r = document.createElement("input");
-            r.type = "radio"; r.name = "ch_" + it.id; r.value = o[0];
-            r.checked = (choices[it.id] || "leave") === o[0];
-            r.addEventListener("change", function () {
-              choices[it.id] = o[0];
-              setCollapsed(item, it.id, o[0] === "approve");
-              refreshChoiceStyles(ch);
+          // Choices or note
+          if (readOnly) {
+            // Last Week Review: view only, no choices
+            // Upcoming / Group Orders: view only; show who approved when Review Status is Approved
+            if (page !== "last" && it.approved) item.appendChild(el("div", "note", it.note || "Already Approved."));
+            // Group Orders: Group button + match badge, or Moved note + Undo (outside the card body, so it shows when collapsed)
+            if (page === "groups") item.appendChild(coBar(it));
+          } else if (disabled) {
+            item.appendChild(el("div", "note", it.note || "Already Approved."));
+          } else {
+            /*
+            var ch = el("div", "choices");
+            ch.setAttribute("role", "radiogroup");
+            ch.setAttribute("aria-label", "Review for " + it.name);
+            [["approve", "Approve"], ["leave", "Leave as is"]].forEach(function (o) {
+              var lab = el("label");
+              var r = document.createElement("input");
+              r.type = "radio"; r.name = "ch_" + it.id; r.value = o[0];
+              r.checked = (choices[it.id] || "leave") === o[0];
+              r.addEventListener("change", function () {
+                choices[it.id] = o[0];
+                setCollapsed(item, it.id, o[0] === "approve");
+                refreshChoiceStyles(ch);
+                updateReviewBtn();
+              });
+              lab.appendChild(r); lab.appendChild(document.createTextNode(o[1]));
+              ch.appendChild(lab);
+            });
+            refreshChoiceStyles(ch);
+            item.appendChild(ch);
+            */
+            var ch = el("div", "choices");
+            var tg = el("button", "approve-toggle", "Approve");
+            tg.type = "button";
+            tg.setAttribute("aria-label", "Approve " + it.name);
+            var on0 = choices[it.id] === "approve";
+            tg.classList.toggle("on-approve", on0);
+            tg.setAttribute("aria-pressed", on0 ? "true" : "false");
+            // Tap once to select Approve, tap again to clear it
+            tg.addEventListener("click", function () {
+              var on = choices[it.id] !== "approve";
+              if (on) choices[it.id] = "approve"; else delete choices[it.id];
+              tg.classList.toggle("on-approve", on);
+              tg.setAttribute("aria-pressed", on ? "true" : "false");
+              setCollapsed(item, it.id, on);   // collapse on Approve, expand when cleared
               updateReviewBtn();
             });
-            lab.appendChild(r); lab.appendChild(document.createTextNode(o[1]));
-            ch.appendChild(lab);
-          });
-          refreshChoiceStyles(ch);
-          item.appendChild(ch);
-          */
-          var ch = el("div", "choices");
-          var tg = el("button", "approve-toggle", "Approve");
-          tg.type = "button";
-          tg.setAttribute("aria-label", "Approve " + it.name);
-          var on0 = choices[it.id] === "approve";
-          tg.classList.toggle("on-approve", on0);
-          tg.setAttribute("aria-pressed", on0 ? "true" : "false");
-          // Tap once to select Approve, tap again to clear it
-          tg.addEventListener("click", function () {
-            var on = choices[it.id] !== "approve";
-            if (on) choices[it.id] = "approve"; else delete choices[it.id];
-            tg.classList.toggle("on-approve", on);
-            tg.setAttribute("aria-pressed", on ? "true" : "false");
-            setCollapsed(item, it.id, on);   // collapse on Approve, expand when cleared
-            updateReviewBtn();
-          });
-          ch.appendChild(tg);
-          item.appendChild(ch);
-        }
-        // list.appendChild(item);
-        target.appendChild(item);
-      });
+            ch.appendChild(tg);
+            item.appendChild(ch);
+          }
+          // list.appendChild(item);
+          target.appendChild(item);
+        });
       });   // Master Page: end of sections loop
       updateCounts();
       refreshToggle();
@@ -1719,7 +1783,7 @@
     function refreshToggle() {
       var b = $("toggleAllBtn"); if (!b) return;
       var cards = allCards();
-      b.textContent = anyCollapsed(cards) ? "Expand All" : "Collapse All";
+      b.textContent = anyCollapsed(cards) ? "Expand Jobs" : "Collapse Jobs";
       b.disabled = cards.length === 0;
     }
     function toggleAll() {
@@ -1898,6 +1962,365 @@
       loadLast();   // Last Week Review is shown first
       load();       // This Week + Upcoming load in the background (Group Orders loads when its tab is selected)
     })();
+
+    // =====================================================================
+    // Master Page: Group Orders combine (Group button, candidate sheet, Undo)
+    // =====================================================================
+    // Scores match combine_orders.py (rapidfuzz "ratio" on "Sold-To | City, State", case-insensitive).
+    var CO_MATCH = 90;            // score >= this -> "Match"
+    var CO_POSSIBLE = 75;         // score >= this (and < CO_MATCH) -> "Possible"
+    // Tiers counted in the card badge. Remove a name to stop counting it; the order here is the badge order.
+    var CO_BADGE_TIERS = ["Match", "Possible", "Other City"];
+    // Tiers listed in the candidate sheet. Remove a name to hide those candidates.
+    var CO_LIST_TIERS = ["Match", "Possible", "Other City"];
+    var CO_TIER_CODE = { "Match": "M", "Possible": "P", "Other City": "O" };
+    var CO_TIER_CLS = { "Match": "co-tier-m", "Possible": "co-tier-p", "Other City": "co-tier-o" };
+    var CO_MAX_MOVES = 12;        // keep the same as CFG.CO_MAX_MOVES in Apps Script
+    var coItems = [];             // all Group Orders cards from the last loadGroups response
+    var coMoved = {};             // itemId -> { batchId, to, by, at } (from the log + this session)
+    var coPairCache = {};         // "idA|idB" -> classify result (null = no match)
+    var coCounts = {};            // itemId -> { "Match": n, ... }
+    var coGen = 0;                // stops an old badge count when the data reloads
+    var coSheetState = null;      // { dest, cands, sel, done }
+
+    function coIndex(sections) {
+      coItems = []; coMoved = {}; coPairCache = {};
+      sections.forEach(function (sec) {
+        (sec.items || []).forEach(function (it) {
+          var f = fieldMap(it);
+          it.coSold = (f[SOLD_TO_COL] && f[SOLD_TO_COL].text) || "";
+          it.coCity = ((f[CITY_COL] && f[CITY_COL].text) || "").trim();
+          it.coSoldL = it.coSold.toLowerCase();
+          it.coCityL = it.coCity.toLowerCase();
+          it.coKey = (it.coSold + " | " + it.coCity).toLowerCase();
+          if (!it.groupTitle) it.groupTitle = sec.title || "";
+          if (it.coMoved) coMoved[it.id] = it.coMoved;
+          coItems.push(it);
+        });
+      });
+    }
+
+    // ---------- Scoring (port of classify() in combine_orders.py) ----------
+    function coLcs(a, b) {
+      if (!a.length || !b.length) return 0;
+      var prev = [], cur, i, j;
+      for (j = 0; j <= b.length; j++) prev.push(0);
+      for (i = 1; i <= a.length; i++) {
+        cur = [0];
+        for (j = 1; j <= b.length; j++) {
+          cur[j] = a.charAt(i - 1) === b.charAt(j - 1) ? prev[j - 1] + 1 : Math.max(prev[j], cur[j - 1]);
+        }
+        prev = cur;
+      }
+      return prev[b.length];
+    }
+    // Python round(): halves go to the even number
+    function coRound(x) {
+      var f = Math.floor(x);
+      if (Math.abs(x - f - 0.5) < 1e-9) return f % 2 === 0 ? f : f + 1;
+      return Math.round(x);
+    }
+    // Upper limit of the score from shared characters. Skips the slow compare when it cannot reach `min`.
+    function coBound(a, b) {
+      var m = {}, k = 0, i, ch;
+      for (i = 0; i < a.length; i++) { ch = a.charAt(i); m[ch] = (m[ch] || 0) + 1; }
+      for (i = 0; i < b.length; i++) { ch = b.charAt(i); if (m[ch] > 0) { m[ch]--; k++; } }
+      return 200 * k / (a.length + b.length);
+    }
+    // a, b are already lower case. 0..100, same as rapidfuzz fuzz.ratio. Returns 0 when it cannot reach `min`.
+    function coScore(a, b, min) {
+      var n = a.length + b.length;
+      if (!n) return 100;
+      if (coBound(a, b) < min - 0.5) return 0;
+      return coRound(200 * coLcs(a, b) / n);
+    }
+    function coClassify(p, c) {
+      if (!p.coSold.trim() || !c.coSold.trim()) return null;
+      if (p.coCity && c.coCity) {
+        var s = coScore(p.coKey, c.coKey, CO_POSSIBLE);
+        if (s >= CO_MATCH) return { tier: "Match", score: s, noCity: false };
+        if (s >= CO_POSSIBLE) return { tier: "Possible", score: s, noCity: false };
+        if (p.coCityL === c.coCityL) return null;
+        var s2 = coScore(p.coSoldL, c.coSoldL, CO_MATCH);
+        return s2 >= CO_MATCH ? { tier: "Other City", score: s2, noCity: false } : null;
+      }
+      var s3 = coScore(p.coSoldL, c.coSoldL, CO_POSSIBLE);
+      if (s3 >= CO_MATCH) return { tier: "Match", score: s3, noCity: true };
+      if (s3 >= CO_POSSIBLE) return { tier: "Possible", score: s3, noCity: true };
+      return null;
+    }
+    function coPair(a, b) {
+      var key = a.id < b.id ? a.id + "|" + b.id : b.id + "|" + a.id;
+      if (!(key in coPairCache)) coPairCache[key] = coClassify(a, b);
+      return coPairCache[key];
+    }
+    // Candidates for a parent/target: child-group jobs that match, not moved, highest score first.
+    function coCandidates(dest) {
+      var out = [];
+      if (!dest.coSold.trim()) return out;
+      coItems.forEach(function (c) {
+        if (c.id === dest.id || !c.coChild || coMoved[c.id]) return;
+        var r = coPair(dest, c);
+        if (r) out.push({ it: c, tier: r.tier, score: r.score, noCity: r.noCity });
+      });
+      out.sort(function (a, b) {
+        return (b.score - a.score) || a.it.name.toLowerCase().localeCompare(b.it.name.toLowerCase());
+      });
+      return out;
+    }
+
+    // ---------- Badges (counted in small steps so the page stays responsive) ----------
+    function coRecount() {
+      var gen = ++coGen;
+      coCounts = {};
+      var dests = coItems.filter(function (it) { return (it.coParent || it.coChild) && !coMoved[it.id]; });
+      var i = 0;
+      (function step() {
+        if (gen !== coGen) return;
+        var t0 = Date.now();
+        while (i < dests.length && Date.now() - t0 < 30) {
+          var d = dests[i++], n = {};
+          coCandidates(d).forEach(function (c) { n[c.tier] = (n[c.tier] || 0) + 1; });
+          coCounts[d.id] = n;
+          var b = $("coBadge_" + d.id);
+          if (b) coFillBadge(b, d.id);
+        }
+        if (i < dests.length) setTimeout(step, 0);
+      })();
+    }
+    function coFillBadge(box, id) {
+      box.textContent = "";
+      var n = coCounts[id];
+      if (!n) { box.appendChild(el("span", null, "Checking\u2026")); return; }
+      var any = false;
+      CO_BADGE_TIERS.forEach(function (t) {
+        if (!n[t]) return;
+        any = true;
+        box.appendChild(el("span", "co-tier " + CO_TIER_CLS[t], t + " " + n[t]));
+      });
+      if (!any) box.appendChild(el("span", null, "No matches"));
+    }
+
+    // ---------- Card bar ----------
+    function coBar(it) {
+      var bar = el("div", "co-bar");
+      var mv = coMoved[it.id];
+      if (mv) {
+        bar.appendChild(el("span", "co-moved", "Moved to " + (mv.to || "parent/target") +
+          (mv.by ? " by " + mv.by : "") + (mv.at ? " on " + mv.at : "") + "."));
+        var ub = el("button", "co-btn co-btn-outline", "Undo");
+        ub.type = "button";
+        ub.setAttribute("aria-label", "Undo move of " + it.name);
+        ub.addEventListener("click", function () { coUndo(it, ub); });
+        bar.appendChild(ub);
+        return bar;
+      }
+      if (!it.coParent && !it.coChild) return bar;
+      var gb = el("button", "co-btn", it.coParent ? "Group (Parent)" : "Group (Target)");
+      gb.type = "button";
+      gb.setAttribute("aria-label", "Find jobs to group with " + it.name);
+      gb.addEventListener("click", function () { coOpen(it); });
+      bar.appendChild(gb);
+      var badge = el("span", "co-badge");
+      badge.id = "coBadge_" + it.id;
+      coFillBadge(badge, it.id);
+      bar.appendChild(badge);
+      return bar;
+    }
+
+    // ---------- Candidate sheet ----------
+    function coBuildSheet() {
+      if ($("coSheet")) return;
+      var sh = el("div", "co-sheet hidden");
+      sh.id = "coSheet";
+      sh.setAttribute("role", "dialog");
+      sh.setAttribute("aria-modal", "true");
+      sh.setAttribute("aria-labelledby", "coTitle");
+      var pn = el("div", "co-panel");
+      var hd = el("div", "co-head");
+      var h = el("h2", null, "Group Orders"); h.id = "coTitle";
+      var x = el("button", "co-close", "\u00D7"); x.type = "button"; x.id = "coClose"; x.setAttribute("aria-label", "Close");
+      hd.appendChild(h); hd.appendChild(x);
+      var dest = el("div", "co-dest"); dest.id = "coDest";
+      var tools = el("div", "co-tools");
+      var allLab = el("label");
+      var all = document.createElement("input"); all.type = "checkbox"; all.id = "coAll";
+      allLab.appendChild(all); allLab.appendChild(document.createTextNode(" Select all"));
+      var cnt = el("span", null, ""); cnt.id = "coCount";
+      tools.appendChild(allLab); tools.appendChild(cnt);
+      var list = el("div", "co-list"); list.id = "coList";
+      var msg = el("div", "co-msg"); msg.id = "coMsg"; msg.setAttribute("aria-live", "polite");
+      var ft = el("div", "co-foot");
+      var cancel = el("button", "co-btn co-btn-outline", "Cancel"); cancel.type = "button"; cancel.id = "coCancel";
+      var go = el("button", "co-btn", "Move"); go.type = "button"; go.id = "coGo";
+      ft.appendChild(cancel); ft.appendChild(go);
+      [hd, dest, tools, list, msg, ft].forEach(function (n) { pn.appendChild(n); });
+      sh.appendChild(pn);
+      document.body.appendChild(sh);
+
+      x.addEventListener("click", coClose);
+      cancel.addEventListener("click", coClose);
+      sh.addEventListener("click", function (e) { if (e.target === sh) coClose(); });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !$("coSheet").classList.contains("hidden")) coClose();
+      });
+      all.addEventListener("change", function () {
+        var s = coSheetState; if (!s || s.done) return;
+        s.sel = {};
+        if (all.checked) s.cands.forEach(function (c) { s.sel[c.it.id] = true; });
+        coRenderList();
+      });
+      go.addEventListener("click", function () {
+        if (coSheetState && coSheetState.done) coClose(); else coSubmit();
+      });
+    }
+
+    function coOpen(it) {
+      if (busy) return;
+      coBuildSheet();
+      var cands = coCandidates(it).filter(function (c) { return CO_LIST_TIERS.indexOf(c.tier) !== -1; });
+      coSheetState = { dest: it, cands: cands, sel: {}, done: false };
+      $("coTitle").textContent = (it.coParent ? "Parent: " : "Target: ") + it.name;
+      var d = $("coDest");
+      d.textContent = "";
+      d.appendChild(el("div", null, it.groupTitle || ""));
+      d.appendChild(el("div", null, "Sold To: " + dash(it.coSold) + "   |   City, State: " + dash(it.coCity)));
+      d.appendChild(el("div", null, "Selected jobs move directly below this job and get its Color Status, " +
+        "Week Of, Scheduled Date/Time, and Tech. Blank values are not copied."));
+      $("coMsg").textContent = "";
+      $("coAll").checked = false;
+      $("coAll").disabled = !cands.length;
+      $("coCancel").classList.remove("hidden");
+      coRenderList();
+      $("coSheet").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      $("coClose").focus();
+    }
+
+    function coClose() {
+      if (busy || !$("coSheet")) return;
+      $("coSheet").classList.add("hidden");
+      document.body.style.overflow = "";
+      coSheetState = null;
+    }
+
+    function coRenderList() {
+      var s = coSheetState, list = $("coList");
+      list.textContent = "";
+      if (!s.cands.length) list.appendChild(el("p", "co-row-sub", "No matching jobs in the child groups."));
+      s.cands.forEach(function (c) {
+        var row = el("label", "co-row");
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = !!s.sel[c.it.id];
+        cb.setAttribute("aria-label", "Move " + c.it.name);
+        cb.addEventListener("change", function () {
+          if (cb.checked) s.sel[c.it.id] = true; else delete s.sel[c.it.id];
+          $("coAll").checked = Object.keys(s.sel).length === s.cands.length;
+          coUpdateGo();
+        });
+        var main = el("div", "co-row-main");
+        main.appendChild(el("div", "co-row-name", c.it.name));
+        main.appendChild(el("div", "co-row-sub", (c.it.groupTitle || "") + "  \u00B7  " + dash(c.it.coSold) +
+          "  \u00B7  " + dash(c.it.coCity)));
+        var tags = el("div", "co-row-tags");
+        tags.appendChild(el("span", "co-tier " + CO_TIER_CLS[c.tier], c.tier + " " + c.score));
+        if (c.noCity) tags.appendChild(el("span", "co-tier co-tier-n", "No City"));
+        if (c.it.url) tags.appendChild(link("Open in monday", c.it.url));
+        main.appendChild(tags);
+        row.appendChild(cb);
+        row.appendChild(main);
+        list.appendChild(row);
+      });
+      coUpdateGo();
+    }
+
+    function coUpdateGo() {
+      var s = coSheetState, go = $("coGo");
+      var n = Object.keys(s.sel).length;
+      $("coCount").textContent = n + " of " + s.cands.length + " selected";
+      $("coMsg").textContent = n > CO_MAX_MOVES ? "Select " + CO_MAX_MOVES + " jobs or fewer per move." : "";
+      go.textContent = n ? "Move " + n + " \u2192 " + s.dest.name : "Move";
+      go.disabled = busy || !n || n > CO_MAX_MOVES;
+    }
+
+    function coSubmit() {
+      var s = coSheetState;
+      if (!s || busy) return;
+      var picked = s.cands.filter(function (c) { return s.sel[c.it.id]; });
+      if (!picked.length || picked.length > CO_MAX_MOVES) return;
+      if (!window.confirm("Move " + picked.length + " job(s) to \"" + (s.dest.groupTitle || "") +
+          "\" directly below " + s.dest.name + "?\n\nColor Status, Week Of, Scheduled Date/Time, and Tech " +
+          "are copied from " + s.dest.name + ". Blank values are not copied.")) return;
+      var k = picked.map(function (c) {
+        return c.it.id + ":" + c.score + ":" + CO_TIER_CODE[c.tier] + (c.noCity ? "n" : "");
+      }).join(",");
+      busy = true; setNav();
+      $("coGo").disabled = true; $("coGo").textContent = "Moving\u2026";
+      $("coAll").disabled = true;
+      Array.prototype.forEach.call($("coList").querySelectorAll("input"), function (x) { x.disabled = true; });
+      callApi("action=combine&dest=" + encodeURIComponent(s.dest.id) + "&k=" + encodeURIComponent(k) +
+        "&who=" + encodeURIComponent(CONFIRMERS[0]), SUBMIT_TIMEOUT_MS, function (res) {
+        busy = false; setNav();
+        if (!res.success) {
+          $("coMsg").textContent = (res.title || "Error") + ": " + (res.message || "");
+          $("coAll").disabled = false;
+          coRenderList();
+          return;
+        }
+        (res.results || []).forEach(function (r) {
+          if (r.result === "OK" || r.result === "Partial") {
+            coMoved[r.id] = { batchId: r.batchId || res.batchId, to: s.dest.name, by: CONFIRMERS[0], at: "this session" };
+          }
+        });
+        s.done = true;
+        coShowResults(res);
+        coRecount();
+        renderPage();
+      });
+    }
+
+    function coShowResults(res) {
+      var list = $("coList");
+      list.textContent = "";
+      (res.results || []).forEach(function (r) {
+        var row = el("div", "co-row");
+        var main = el("div", "co-row-main");
+        main.appendChild(el("div", "co-row-name", r.name + " \u2014 " + r.result));
+        if (r.note) main.appendChild(el("div", "co-row-sub", r.note));
+        row.appendChild(main);
+        list.appendChild(row);
+      });
+      $("coCount").textContent = "";
+      $("coAll").disabled = true;
+      $("coCancel").classList.add("hidden");
+      $("coGo").disabled = false;
+      $("coGo").textContent = "Close";
+    }
+
+    // ---------- Undo ----------
+    function coUndo(it, btn) {
+      var mv = coMoved[it.id];
+      if (!mv || busy) return;
+      if (!window.confirm("Undo the move of " + it.name + "?\n\nIt goes back to its original group and position, " +
+          "and its Color Status, Week Of, Scheduled Date/Time, and Tech are restored.")) return;
+      busy = true; setNav();
+      btn.disabled = true; btn.textContent = "Undoing\u2026";
+      callApi("action=coUndo&batch=" + encodeURIComponent(mv.batchId) + "&child=" + encodeURIComponent(it.id) +
+        "&who=" + encodeURIComponent(CONFIRMERS[0]), SUBMIT_TIMEOUT_MS, function (res) {
+        busy = false; setNav();
+        if (!res.success) {
+          btn.disabled = false; btn.textContent = "Undo";
+          window.alert((res.title || "Error") + ": " + (res.message || ""));
+          return;
+        }
+        delete coMoved[it.id];
+        it.coMoved = null;
+        window.alert(res.message || "Undone.");
+        coRecount();
+        renderPage();
+      });
+    }
   </script>
 </body>
 
