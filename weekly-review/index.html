@@ -769,103 +769,393 @@
         margin-left: 0;
       }
     }
+
     /* ---------- Master Page: Group Orders combine ---------- */
     /* #0073ea = same blue as the tab bar; change here if needed */
-    .co-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+    .co-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
     .co-btn {
-      padding: 6px 12px; font-size: 14px; font-family: inherit; cursor: pointer;
-      border: 1px solid #0073ea; background: #0073ea; color: #fff; border-radius: 5px;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid #0073ea;
+      background: #0073ea;
+      color: #fff;
+      border-radius: 5px;
     }
-    .co-btn:disabled { opacity: .5; cursor: default; }
-    .co-btn-outline { background: #fff; color: #0073ea; }
-    .co-btn:focus-visible, .co-close:focus-visible { outline: 2px solid #333; outline-offset: 2px; }
-    .co-badge { display: flex; flex-wrap: wrap; gap: 4px; font-size: 12px; color: #555; }
-    .co-tier { padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-    .co-tier-m { background: #00c875; color: #fff; }
-    .co-tier-p { background: #fdab3d; color: #1f1f1f; }
-    .co-tier-o { background: #a25ddc; color: #fff; }
-    .co-tier-n { background: #c4c4c4; color: #1f1f1f; }
-    .co-moved { font-size: 13px; color: #555; }
+
+    .co-btn:disabled {
+      opacity: .5;
+      cursor: default;
+    }
+
+    .co-btn-outline {
+      background: #fff;
+      color: #0073ea;
+    }
+
+    .co-btn:focus-visible,
+    .co-close:focus-visible {
+      outline: 2px solid #333;
+      outline-offset: 2px;
+    }
+
+    .co-badge {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .co-tier {
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .co-tier-m {
+      background: #00c875;
+      color: #fff;
+    }
+
+    .co-tier-p {
+      background: #fdab3d;
+      color: #1f1f1f;
+    }
+
+    .co-tier-o {
+      background: #a25ddc;
+      color: #fff;
+    }
+
+    .co-tier-n {
+      background: #c4c4c4;
+      color: #1f1f1f;
+    }
+
+    .co-moved {
+      font-size: 13px;
+      color: #555;
+    }
+
     .co-sheet {
-      position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, .45);
-      display: flex; align-items: flex-end; justify-content: center;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, .45);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
     }
-    .co-sheet.hidden { display: none; }
+
+    .co-sheet.hidden {
+      display: none;
+    }
+
     .co-panel {
-      background: #fff; width: 100%; max-width: 720px; max-height: 90%;
-      display: flex; flex-direction: column; border-radius: 12px 12px 0 0;
+      background: #fff;
+      width: 100%;
+      max-width: 720px;
+      max-height: 90%;
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px 12px 0 0;
       box-shadow: 0 -4px 16px rgba(0, 0, 0, .2);
     }
-    .co-head { display: flex; align-items: center; justify-content: space-between; gap: 8px;
-               padding: 12px 16px; border-bottom: 1px solid #e6e6e6; }
-    .co-head h2 { margin: 0; font-size: 17px; word-break: break-word; }
-    .co-close { border: none; background: none; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; }
-    .co-dest { padding: 10px 16px; font-size: 14px; background: #f5f6f8; }
-    .co-dest div + div { margin-top: 4px; }
-    .co-tools { display: flex; justify-content: space-between; align-items: center; gap: 8px;
-                padding: 8px 16px; font-size: 14px; }
-    .co-list { overflow-y: auto; padding: 0 16px; flex: 1 1 auto; }
-    .co-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #eee; }
-    .co-row input[type="checkbox"] { width: 20px; height: 20px; margin-top: 2px; flex: none; }
-    .co-row-main { flex: 1; min-width: 0; }
-    .co-row-name { font-weight: 600; word-break: break-word; }
-    .co-row-sub { font-size: 13px; color: #555; word-break: break-word; }
-    .co-row-tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 4px; font-size: 13px; }
-    .co-msg { padding: 8px 16px; font-size: 14px; color: #b00020; white-space: pre-line; }
-    .co-msg:empty { display: none; }
-    .co-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid #e6e6e6; }
+
+    .co-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e6e6e6;
+    }
+
+    .co-head h2 {
+      margin: 0;
+      font-size: 17px;
+      word-break: break-word;
+    }
+
+    .co-close {
+      border: none;
+      background: none;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .co-dest {
+      padding: 10px 16px;
+      font-size: 14px;
+      background: #f5f6f8;
+    }
+
+    .co-dest div+div {
+      margin-top: 4px;
+    }
+
+    .co-tools {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    .co-list {
+      overflow-y: auto;
+      padding: 0 16px;
+      flex: 1 1 auto;
+    }
+
+    .co-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .co-row input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      flex: none;
+    }
+
+    .co-row-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .co-row-name {
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .co-row-sub {
+      font-size: 13px;
+      color: #555;
+      word-break: break-word;
+    }
+
+    .co-row-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 4px;
+      font-size: 13px;
+    }
+
+    .co-msg {
+      padding: 8px 16px;
+      font-size: 14px;
+      color: #b00020;
+      white-space: pre-line;
+    }
+
+    .co-msg:empty {
+      display: none;
+    }
+
+    .co-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid #e6e6e6;
+    }
+
     @media (min-width: 721px) {
-      .co-sheet { align-items: center; }
-      .co-panel { border-radius: 12px; }
+      .co-sheet {
+        align-items: center;
+      }
+
+      .co-panel {
+        border-radius: 12px;
+      }
     }
+
     /* ---------- Master Page: Group pop-up as cards ---------- */
-    .item.no-tabs .item-head { padding-right: 0; }
-    .co-panel { max-width: 860px; }
-    .co-dest { background: #f5f6f8; border-bottom: 1px solid #e6e6e6; }
-    .co-dest .item { margin-bottom: 6px; background: #fff; }
-    .co-label { font-size: 11px; color: #9e9e9e; text-transform: uppercase; letter-spacing: .04em; margin: 10px 0 6px; }
-    .co-copy-note { font-size: 13px; color: #616161; }
-    .co-grp-line { font-size: 13px; color: #616161; }
-    .co-open { font-size: 13px; margin-top: 2px; }
-    .co-open a { color: #1565c0; }
-    .co-card { cursor: default; }
-    .co-card.co-picked { background: #e8f5e9; border-color: #2e7d32; }
-    .co-pick { width: 20px; height: 20px; margin: 4px 2px 0 0; flex: none; cursor: pointer; }
-    .co-foot { justify-content: space-between; flex-wrap: wrap; align-items: center; }
-    .co-foot .co-tools { padding: 0; gap: 14px; }
-    .co-foot-btns { display: flex; gap: 8px; margin-left: auto; }
-    @media (max-width: 480px) {
-      .item.no-tabs { padding-top: 12px; }
+    .item.no-tabs .item-head {
+      padding-right: 0;
     }
+
+    .co-panel {
+      max-width: 860px;
+    }
+
+    .co-dest {
+      background: #f5f6f8;
+      border-bottom: 1px solid #e6e6e6;
+    }
+
+    .co-dest .item {
+      margin-bottom: 6px;
+      background: #fff;
+    }
+
+    .co-label {
+      font-size: 11px;
+      color: #9e9e9e;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin: 10px 0 6px;
+    }
+
+    .co-copy-note {
+      font-size: 13px;
+      color: #616161;
+    }
+
+    .co-grp-line {
+      font-size: 13px;
+      color: #616161;
+    }
+
+    .co-open {
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .co-open a {
+      color: #1565c0;
+    }
+
+    .co-card {
+      cursor: default;
+    }
+
+    .co-card.co-picked {
+      background: #e8f5e9;
+      border-color: #2e7d32;
+    }
+
+    .co-pick {
+      width: 20px;
+      height: 20px;
+      margin: 4px 2px 0 0;
+      flex: none;
+      cursor: pointer;
+    }
+
+    .co-foot {
+      justify-content: space-between;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .co-foot .co-tools {
+      padding: 0;
+      gap: 14px;
+    }
+
+    .co-foot-btns {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    @media (max-width: 480px) {
+      .item.no-tabs {
+        padding-top: 12px;
+      }
+    }
+
     /* ---------- Master Page: sticky toolbar (pins under the tab bar) ---------- */
     /* "top" is set by syncStickyTop() to the tab bar height; 62px is the fallback */
     .sticky-tools {
       position: sticky;
       top: 62px;
-      z-index: 15;                 /* below the tab bar (20), above the cards */
-      margin: 0 -24px;             /* full width of .card-body (24px side padding) */
+      z-index: 15;
+      /* below the tab bar (20), above the cards */
+      margin: 0 -24px;
+      /* full width of .card-body (24px side padding) */
       padding: 8px 24px 10px;
       background: #fff;
       border-bottom: 1px solid #eee;
     }
+
     .sticky-tools .page-nav:empty,
-    .sticky-tools .page-nav:not(:has(.btn:not(.hidden))) { margin-bottom: 0; }
+    .sticky-tools .page-nav:not(:has(.btn:not(.hidden))) {
+      margin-bottom: 0;
+    }
+
     /* ---------- Master Page: tab filters ---------- */
-    .filters { display: flex; flex-direction: column; gap: 6px; margin: 10px 0 0; }
-    .f-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-    .f-label { font-size: 11px; color: #9e9e9e; text-transform: uppercase; min-width: 110px; }
+    .filters {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 10px 0 0;
+    }
+
+    .f-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .f-label {
+      font-size: 11px;
+      color: #9e9e9e;
+      text-transform: uppercase;
+      min-width: 110px;
+    }
+
     .f-chip {
-      padding: 4px 12px; border: 1px solid #ccc; border-radius: 14px; background: #fff;
-      color: #212121; font-family: inherit; font-size: 13px; cursor: pointer;
+      padding: 4px 12px;
+      border: 1px solid #ccc;
+      border-radius: 14px;
+      background: #fff;
+      color: #212121;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
     }
-    .f-chip.on { background: #1565c0; border-color: #1565c0; color: #fff; }
-    .f-chip:disabled { opacity: .45; cursor: default; }
-    .f-chip:focus-visible { outline: 3px solid #90caf9; outline-offset: 2px; }
-    .f-clear { align-self: flex-start; }
+
+    .f-chip.on {
+      background: #1565c0;
+      border-color: #1565c0;
+      color: #fff;
+    }
+
+    .f-chip:disabled {
+      opacity: .45;
+      cursor: default;
+    }
+
+    .f-chip:focus-visible {
+      outline: 3px solid #90caf9;
+      outline-offset: 2px;
+    }
+
+    .f-clear {
+      align-self: flex-start;
+    }
+
     @media (max-width: 480px) {
-      .f-label { min-width: 0; width: 100%; }
+      .f-label {
+        min-width: 0;
+        width: 100%;
+      }
     }
-    </style>
+  </style>
 </head>
 
 <body>
@@ -899,32 +1189,33 @@
                   <button type="button" class="btn btn-small" id="proceedTopBtn">Proceed -&gt;</button>
                 </div> -->
         <div class="sticky-tools" id="stickyTools">
-        <div class="page-nav" id="navTop">
-          <!-- <button type="button" class="btn btn-small" id="navLastTop">&lt;- Last Week</button> -->
-          <!-- <button type="button" class="btn btn-small" id="navThisTop">This Week -&gt;</button>  -->
-          <button type="button" class="btn hidden" id="reviewBtn" disabled>Review &amp; Confirm</button>
-        </div>
-        <!-- </div> --><!-- Master Page: extra close tag. It closed #review early and pushed the footer outside the card (card shifted left). -->
-        <div class="toolbar">
-          <div class="who" id="whoBox">
-            <!-- <label for="whoSelect">Confirmed by:</label> -->
-            <!-- <select id="whoSelect"></select> -->
-            <!-- Master Page: select kept (hidden) so existing code still reads whoSelect.value (CONFIRMERS[0]) -->
-            <select id="whoSelect" class="hidden" aria-hidden="true" tabindex="-1"></select>
-            <span>Confirmer: Joshua McCann</span>
+          <div class="page-nav" id="navTop">
+            <!-- <button type="button" class="btn btn-small" id="navLastTop">&lt;- Last Week</button> -->
+            <!-- <button type="button" class="btn btn-small" id="navThisTop">This Week -&gt;</button>  -->
+            <button type="button" class="btn hidden" id="reviewBtn" disabled>Review &amp; Confirm</button>
           </div>
-          <!-- <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button> -->
-          <div class="tb-right">
-            <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
-            <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn" aria-controls="itemList">Collapse
-              All</button>
-            <button type="button" class="btn btn-small btn-outline hidden" id="groupsBtn"
-              aria-controls="itemList">Collapse Groups</button>
-            <button type="button" class="btn btn-small btn-outline hidden" id="refreshBtn">Refresh</button>
+          <!-- </div> --><!-- Master Page: extra close tag. It closed #review early and pushed the footer outside the card (card shifted left). -->
+          <div class="toolbar">
+            <div class="who" id="whoBox">
+              <!-- <label for="whoSelect">Confirmed by:</label> -->
+              <!-- <select id="whoSelect"></select> -->
+              <!-- Master Page: select kept (hidden) so existing code still reads whoSelect.value (CONFIRMERS[0]) -->
+              <select id="whoSelect" class="hidden" aria-hidden="true" tabindex="-1"></select>
+              <span>Confirmer: Joshua McCann</span>
+            </div>
+            <!-- <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button> -->
+            <div class="tb-right">
+              <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
+              <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn"
+                aria-controls="itemList">Collapse
+                All</button>
+              <button type="button" class="btn btn-small btn-outline hidden" id="groupsBtn"
+                aria-controls="itemList">Collapse Groups</button>
+              <button type="button" class="btn btn-small btn-outline hidden" id="refreshBtn">Refresh</button>
+            </div>
           </div>
-        </div>
-        <!-- Master Page: filter chips (built by renderFilters)-->
-        <div class="filters hidden" id="filterBar" aria-label="Filters"></div>
+          <!-- Master Page: filter chips (built by renderFilters)-->
+          <div class="filters hidden" id="filterBar" aria-label="Filters"></div>
         </div> <!-- Master Page: end sticky-tools-->
         <p class="counts" id="counts" aria-live="polite"></p>
         <div id="itemList"></div>
@@ -988,7 +1279,8 @@
     var FILTER_DEFS = {
       last: [
         {
-          key: "order", label: "Order Status", options: ["Open", "Reported"],
+          // key: "order", label: "Order Status", options: ["Open", "Reported"],
+          key: "order", label: "Order Status", options: function () { return orderOptions(); },
           values: function (it) { return [colText(it, ORDER_COL, ORDER_DEFAULT)]; }
         },
         {
@@ -1737,6 +2029,8 @@
           left.appendChild(n);
           left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
           left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
+          // Master Page: Last Week cards come from any group, so show the group name
+          if (page === "last" && it.groupTitle) left.appendChild(el("div", "co-grp-line", it.groupTitle));
           headLeft.appendChild(left);
           head.appendChild(headLeft);
           item.appendChild(head);
@@ -1809,6 +2103,8 @@
             // Last Week Review: view only, no choices
             // Upcoming / Group Orders: view only; show who approved when Review Status is Approved
             if (page !== "last" && it.approved) item.appendChild(el("div", "note", it.note || "Already Approved."));
+            // Master Page: Last Week Scheduled Date/Time check (Week Of decides the tab; this only flags a mismatch)
+            if (page === "last" && it.schedNote) item.appendChild(el("div", "note warn", it.schedNote));
             // Group Orders: Group button + match badge, or Moved note + Undo (outside the card body, so it shows when collapsed)
             if (page === "groups") item.appendChild(coBar(it));
           } else if (disabled) {
@@ -1924,6 +2220,17 @@
       var names = t ? t.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
       return names.length ? names : ["Unassigned"];
     }
+    // Last Week: Order Status chips = Open, Reported, then every other label on the loaded Last Week cards (A–Z)
+    var ORDER_BASE = ["Open", "Reported"];
+    function orderOptions() {
+      var seen = {}, extra = [];
+      ORDER_BASE.forEach(function (o) { seen[o] = true; });
+      ((pages.last.data && pages.last.data.items) || []).forEach(function (it) {
+        var t = colText(it, ORDER_COL, ORDER_DEFAULT);
+        if (!seen[t]) { seen[t] = true; extra.push(t); }
+      });
+      return ORDER_BASE.concat(extra.sort());
+    }
     function defOn(p, d) {
       var s = (filterState[p] || {})[d.key];
       return !!s && Object.keys(s).length > 0;
@@ -1972,7 +2279,8 @@
         row.setAttribute("aria-label", d.label);
         row.appendChild(el("span", "f-label", d.label));
         var wait = d.needCounts && !coCountDone;
-        (d.toggle ? [d.toggle] : d.options).forEach(function (o) {
+        // (d.toggle ? [d.toggle] : d.options).forEach(function (o) {
+        (d.toggle ? [d.toggle] : (typeof d.options === "function" ? d.options() : d.options)).forEach(function (o) {
           var on = !!(st[d.key] && st[d.key][o]);
           var b = el("button", "f-chip" + (on ? " on" : ""), o);
           b.type = "button";
@@ -2008,7 +2316,7 @@
       if (page === "upcoming" || page === "groups") refreshGroupsBtn();
     }
     // This Week: jobs not yet approved that pass the filters (Approve All / Clear All use these)
-    function availableShown() { return available().filter(passes); }    
+    function availableShown() { return available().filter(passes); }
 
     // ---------- Expand All / Collapse All (all cards, including greyed-out ones) ----------
     function allCards() { return Array.prototype.slice.call($("itemList").querySelectorAll(".item")); }
@@ -2188,8 +2496,8 @@
 
     // Master Page: pin the sticky toolbar directly under the tab bar (1 row desktop, 2 rows mobile)
     function syncStickyTop() {
-      var tb =$("tabBar"), st = $("stickyTools");
-      if  (tb && st) st.style.top = tb.offsetHeight + "px";
+      var tb = $("tabBar"), st = $("stickyTools");
+      if (tb && st) st.style.top = tb.offsetHeight + "px";
     }
     // ---------- Init ----------
     (function init() {
@@ -2544,7 +2852,7 @@
 
     function coOpen(it) {
       if (busy) return;
-      if(!coHasCands(it.id)) return;  //Master Page: gGRoup button is disabled when there are no matches
+      if (!coHasCands(it.id)) return;  //Master Page: gGRoup button is disabled when there are no matches
       coBuildSheet();
       var cands = coCandidates(it).filter(function (c) { return CO_LIST_TIERS.indexOf(c.tier) !== -1; });
       coSheetState = { dest: it, cands: cands, sel: {}, done: false };
@@ -2763,8 +3071,8 @@
       var picked = s.cands.filter(function (c) { return s.sel[c.it.id]; });
       if (!picked.length || picked.length > CO_MAX_MOVES) return;
       if (!window.confirm("Move " + picked.length + " job(s) to \"" + (s.dest.groupTitle || "") +
-          "\" directly below " + s.dest.name + "?\n\nColor Status, Week Of, Scheduled Date/Time, and Tech " +
-          "are copied from " + s.dest.name + ". Blank values are not copied.")) return;
+        "\" directly below " + s.dest.name + "?\n\nColor Status, Week Of, Scheduled Date/Time, and Tech " +
+        "are copied from " + s.dest.name + ". Blank values are not copied.")) return;
       var k = picked.map(function (c) {
         return c.it.id + ":" + c.score + ":" + CO_TIER_CODE[c.tier] + (c.noCity ? "n" : "");
       }).join(",");
@@ -2774,23 +3082,23 @@
       Array.prototype.forEach.call($("coList").querySelectorAll("input"), function (x) { x.disabled = true; });
       callApi("action=combine&dest=" + encodeURIComponent(s.dest.id) + "&k=" + encodeURIComponent(k) +
         "&who=" + encodeURIComponent(CONFIRMERS[0]), SUBMIT_TIMEOUT_MS, function (res) {
-        busy = false; setNav();
-        if (!res.success) {
-          $("coMsg").textContent = (res.title || "Error") + ": " + (res.message || "");
-          $("coAll").disabled = false;
-          coRenderList();
-          return;
-        }
-        (res.results || []).forEach(function (r) {
-          if (r.result === "OK" || r.result === "Partial") {
-            coMoved[r.id] = { batchId: r.batchId || res.batchId, to: s.dest.name, by: CONFIRMERS[0], at: "this session" };
+          busy = false; setNav();
+          if (!res.success) {
+            $("coMsg").textContent = (res.title || "Error") + ": " + (res.message || "");
+            $("coAll").disabled = false;
+            coRenderList();
+            return;
           }
+          (res.results || []).forEach(function (r) {
+            if (r.result === "OK" || r.result === "Partial") {
+              coMoved[r.id] = { batchId: r.batchId || res.batchId, to: s.dest.name, by: CONFIRMERS[0], at: "this session" };
+            }
+          });
+          s.done = true;
+          coShowResults(res);
+          coRecount();
+          renderPage();
         });
-        s.done = true;
-        coShowResults(res);
-        coRecount();
-        renderPage();
-      });
     }
 
     function coShowResults(res) {
@@ -2816,23 +3124,23 @@
       var mv = coMoved[it.id];
       if (!mv || busy) return;
       if (!window.confirm("Undo the move of " + it.name + "?\n\nIt goes back to its original group and position, " +
-          "and its Color Status, Week Of, Scheduled Date/Time, and Tech are restored.")) return;
+        "and its Color Status, Week Of, Scheduled Date/Time, and Tech are restored.")) return;
       busy = true; setNav();
       btn.disabled = true; btn.textContent = "Undoing\u2026";
       callApi("action=coUndo&batch=" + encodeURIComponent(mv.batchId) + "&child=" + encodeURIComponent(it.id) +
         "&who=" + encodeURIComponent(CONFIRMERS[0]), SUBMIT_TIMEOUT_MS, function (res) {
-        busy = false; setNav();
-        if (!res.success) {
-          btn.disabled = false; btn.textContent = "Undo";
-          window.alert((res.title || "Error") + ": " + (res.message || ""));
-          return;
-        }
-        delete coMoved[it.id];
-        it.coMoved = null;
-        window.alert(res.message || "Undone.");
-        coRecount();
-        renderPage();
-      });
+          busy = false; setNav();
+          if (!res.success) {
+            btn.disabled = false; btn.textContent = "Undo";
+            window.alert((res.title || "Error") + ": " + (res.message || ""));
+            return;
+          }
+          delete coMoved[it.id];
+          it.coMoved = null;
+          window.alert(res.message || "Undone.");
+          coRecount();
+          renderPage();
+        });
     }
   </script>
 </body>
