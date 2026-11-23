@@ -1155,6 +1155,13 @@
         width: 100%;
       }
     }
+    /* ---------- Master Page: click card to expand, click header to collapse ---------- */
+    .item.collapsed {
+      cursor: pointer;
+    }
+    .item:not(.collapsed) .item-head {
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -2097,6 +2104,10 @@
           });
           item.appendChild(body);
           setCollapsed(item, it.id, isCollapsed(it));
+          // Master Page: click card to expand, click header to collapse
+          item.addEventListener("click", function (e) {
+            cardClick(e, item, function (on) { setCollapsed(item, it.id, on); });
+          });
 
           // Choices or note
           if (readOnly) {
@@ -2203,11 +2214,21 @@
       if (c) {
         c.setAttribute("aria-expanded", on ? "false" : "true");
         c.setAttribute("aria-label", (on ? "Expand" : "Collapse") + " details");
-        c.title = on ? "Show details" : "Hide details";
+        c.title = on ? "Hide details" : "Show details";
       }
       refreshToggle();
     }
-
+    // Master Page: card click. Collapsed card: a click anywhere expands it.
+    // Expanded card: only a click in the header (.item-head) collapses it.
+    // Links, buttons, inputs, and labels keep their own action. A text selection does not toggle.
+    // apply(on): on = true collapses, false expands.
+    function cardClick(e, card, apply) {
+      if (e.target.closest("a, button, input, label, select, textarea")) return;
+      if (window.getSelection && String(window.getSelection())) return;
+      if (card.classList.contains("collapsed")) { apply(false); return; }
+      var h = e.target.closest(".item-head");
+      if (h && card.contains(h)) apply(true);
+    }
     // ---------- Master Page: tab filters ----------
     function colText(it, col, dflt) {
       var x = fieldMap(it)[col];
@@ -2999,6 +3020,10 @@
       body.id = bodyId;
       card.appendChild(body);
       coSetOpen(card, it.id, !!s.open[it.id]);
+      // Master page: click card to expand, click header to collapse (checkbox and links keep their own action)
+      card.addEventListener("click", function (e) {
+        cardClick(e, card, function (on) { coSetOpen(card, it.id, !on); });
+      });
       return card;
     }
     function coSetOpen(card, id, open) {
