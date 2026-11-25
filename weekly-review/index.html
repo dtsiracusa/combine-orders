@@ -1159,10 +1159,72 @@
     .item.collapsed {
       cursor: pointer;
     }
-    .item:not(.collapsed) .item-head {
-      cursor: pointer;
-    }
-  </style>
+      .item:not(.collapsed) .item-head {
+        cursor: pointer;
+      }
+      /* ---------- Master Page: compact sticky header ---------- */
+      .sticky-tools {
+        padding: 4px 24px 6px;
+      }
+      .toolbar {
+        margin-bottom: 0;
+      }
+      .sticky-tools .btn-small {
+        padding: 5px 10px;
+        font-size: 13px;
+      }
+      .tb-right {
+        gap: 6px;
+      }
+      /* Review & Confirm moved into .tb-right, so this row is empty */
+      #navTop {
+        display: none;
+      }
+      .tb-clear {
+        text-align: right;
+        margin-top: 4px;
+      }
+      .btn-clear {
+        background: #fff3e0;
+        color: #e65100;
+        border: 1px solid #e65100;
+      }
+      .btn-clear:hover {
+        background: #ffe0b2;
+        opacity: 1;
+      }
+      /* One scrolling chip row per filter, label on the same line */
+      .filters {
+        margin: 6px 0 0;
+        gap: 4px;
+      }
+      .f-row {
+        flex-wrap: nowrap;
+        gap: 8px;
+      }
+      .f-label {
+        flex: 0 0 auto;
+        min-width: 96px;
+        width: auto;
+        white-space: nowrap;
+      }
+      .f-chips {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
+      }
+      .f-chip {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 3px 11px;
+      }
+    </style>
 </head>
 
 <body>
@@ -1199,7 +1261,7 @@
           <div class="page-nav" id="navTop">
             <!-- <button type="button" class="btn btn-small" id="navLastTop">&lt;- Last Week</button> -->
             <!-- <button type="button" class="btn btn-small" id="navThisTop">This Week -&gt;</button>  -->
-            <button type="button" class="btn hidden" id="reviewBtn" disabled>Review &amp; Confirm</button>
+            <!--<button type="button" class="btn hidden" id="reviewBtn" disabled>Review &amp; Confirm</button> -->
           </div>
           <!-- </div> --><!-- Master Page: extra close tag. It closed #review early and pushed the footer outside the card (card shifted left). -->
           <div class="toolbar">
@@ -1208,10 +1270,10 @@
               <!-- <select id="whoSelect"></select> -->
               <!-- Master Page: select kept (hidden) so existing code still reads whoSelect.value (CONFIRMERS[0]) -->
               <select id="whoSelect" class="hidden" aria-hidden="true" tabindex="-1"></select>
-              <span>Confirmer: Joshua McCann</span>
             </div>
             <!-- <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button> -->
             <div class="tb-right">
+              <button type="button" class="btn btn-small hidden" id="reviewBtn" disabled>Review &amp; Confirm</button>
               <button type="button" class="btn btn-small btn-outline" id="approveAllBtn">Approve All</button>
               <button type="button" class="btn btn-small btn-outline" id="toggleAllBtn"
                 aria-controls="itemList">Collapse
@@ -1220,6 +1282,9 @@
                 aria-controls="itemList">Collapse Groups</button>
               <button type="button" class="btn btn-small btn-outline hidden" id="refreshBtn">Refresh</button>
             </div>
+          </div>
+          <div class="tb-clear hidden" id="clearRow">
+            <button type="button" class="btn btn-small btn-clear" id="clearFiltersBtn">Clear filters</button>
           </div>
           <!-- Master Page: filter chips (built by renderFilters)-->
           <div class="filters hidden" id="filterBar" aria-label="Filters"></div>
@@ -1304,6 +1369,11 @@
           key: "tech", label: "Tech",
           options: TECH_LINKS.map(function (t) { return t.name; }).concat(["Unassigned"]),
           values: function (it) { return techNames(it); }
+        },
+        {
+          // Master Page: This Week now includes jobs moved out of This Week (Locked)
+          key: "group", label: "Group", options: function () { return thisWeekGroupOptions(); },
+          values: function (it) { return [it.groupTitle || "-"]; }
         }
       ],
       groups: [
@@ -1831,18 +1901,24 @@
     // This Week (Approve flow)
     function renderCurrent() {
       if (!data.items.length) {
+        // setState("info", "", TAB_NAMES.current,
+        //   "There are no items in \u201c" + (data.groupTitle || "This Week (Locked)") + "\u201d right now.");
         setState("info", "", TAB_NAMES.current,
-          "There are no items in \u201c" + (data.groupTitle || "This Week (Locked)") + "\u201d right now.");
+          "There are no jobs with Week Of " + (data.weekText || "this week") + " right now.");
         $("review").classList.add("hidden");
         $("reviewBtn").classList.add("hidden");
         return;
       }
-      setState("ready", "&#128203;", TAB_NAMES.current,
-        "Review each job in \u201c" + data.groupTitle + "\u201d. Choose Approve for jobs that are ready, " +
-        "then select Review & Confirm. Approved jobs have their Review Status set to Approved.");
-      renderItems();
-      $("review").classList.remove("hidden");
-      $("reviewBtn").classList.remove("hidden");
+      // setState("ready", "&#128203;", TAB_NAMES.current,
+      //   "Review each job in \u201c" + data.groupTitle + "\u201d. Choose Approve for jobs that are ready, " +
+      //   "then select Review & Confirm. Approved jobs have their Review Status set to Approved.");
+      setState("ready", "&#128203;", TAB_NAMES.current, inReviewWindow()
+        ? "Jobs for " + data.weekText + ". Choose Approve for jobs that are ready, " +
+        "then select Review & Confirm. Approved jobs have their Review Status set to Approved."
+        : "Jobs for " + data.weekText + ". This tab is view only. Approvals are open Monday 12:00 PM to Saturday 12:00 PM.");
+      renderItems();                                   // Master Page: draw This Week cards (was missing; old cards stayed on screen)
+      $("review").classList.remove("hidden");          // Master Page: show the card list when This Week is the first tab drawn
+      if (inReviewWindow()) $("reviewBtn").classList.remove("hidden");
       $("toggleAllBtn").classList.remove("hidden");
       updateReviewBtn();
       showMenu();
@@ -1879,8 +1955,9 @@
       page = p;
       var cur = p === "current";
       $("whoBox").classList.toggle("hidden", !cur);
-      $("approveAllBtn").classList.toggle("hidden", !cur);
-      if (!cur) $("reviewBtn").classList.add("hidden");
+      var canApprove = cur && inReviewWindow();
+      $("approveAllBtn").classList.toggle("hidden", !canApprove);
+      if (!canApprove) $("reviewBtn").classList.add("hidden");
       $("refreshBtn").classList.toggle("hidden", p !== "groups");
       $("groupsBtn").classList.toggle("hidden", p !== "upcoming" && p !== "groups");
       setNav();
@@ -1965,6 +2042,8 @@
           // var readOnly = page === "last";                // Last Week Review: no choices, never greyed out
           var readOnly = page !== "current";             // only This Week has choices; view-only tabs are never greyed out
           var disabled = !readOnly && !!it.approved;
+          // Master Page: no Approve toggle outside the review window, or on jobs moved out of This Week (Locked)
+          var noApprove = !readOnly && (it.canApprove === false || !inReviewWindow());
           var item = el("div", "item" + (disabled ? " disabled" : ""));
           item.setAttribute("data-id", it.id);
           if (validHex(it.colorStatusColor)) item.style.setProperty("--gc", it.colorStatusColor);
@@ -2037,7 +2116,8 @@
           left.appendChild(el("div", "soldto", dash(f[SOLD_TO_COL] && f[SOLD_TO_COL].text)));
           left.appendChild(el("div", "city", dash(f[CITY_COL] && f[CITY_COL].text)));
           // Master Page: Last Week cards come from any group, so show the group name
-          if (page === "last" && it.groupTitle) left.appendChild(el("div", "co-grp-line", it.groupTitle));
+          // if (page === "last" && it.groupTitle) left.appendChild(el("div", "co-grp-line", it.groupTitle));
+          if ((page === "last" || page === "current") && it.groupTitle) left.appendChild(el("div", "co-grp-line", it.groupTitle));
           headLeft.appendChild(left);
           head.appendChild(headLeft);
           item.appendChild(head);
@@ -2110,7 +2190,8 @@
           });
 
           // Choices or note
-          if (readOnly) {
+          //if (readOnly) {
+          if (readOnly || noApprove) {
             // Last Week Review: view only, no choices
             // Upcoming / Group Orders: view only; show who approved when Review Status is Approved
             if (page !== "last" && it.approved) item.appendChild(el("div", "note", it.note || "Already Approved."));
@@ -2242,6 +2323,15 @@
       return names.length ? names : ["Unassigned"];
     }
     // Last Week: Order Status chips = Open, Reported, then every other label on the loaded Last Week cards (A–Z)
+    // Master Page: This Week Group chips = every group on the loaded This Week cards (A–Z)
+    function thisWeekGroupOptions() {
+      var seen = {}, out = [];
+      ((pages.current.data && pages.current.data.items) || []).forEach(function (it) {
+        var t = it.groupTitle || "-";
+        if (!seen[t]) { seen[t] = true; out.push(t); }
+      });
+      return out.sort();
+    }
     var ORDER_BASE = ["Open", "Reported"];
     function orderOptions() {
       var seen = {}, extra = [];
@@ -2289,16 +2379,26 @@
     }
     function renderFilters() {
       var bar = $("filterBar"); if (!bar) return;
+
+      // Master Page: remember each chip row's scroll position so tapping a chip doesn't jump it back to the start
+      var keepScroll = {};
+      Array.prototype.forEach.call(bar.querySelectorAll(".f-chips"), function (c) {
+        keepScroll[c.getAttribute("data-key")] = c.scrollLeft;
+      });
       bar.textContent = "";
       var defs = FILTER_DEFS[page];
       bar.classList.toggle("hidden", !defs);
-      if (!defs) return;
+      //if (!defs) return;
+      if (!defs) { updateClearBtn(); return; }
       var st = filterState[page];
       defs.forEach(function (d) {
         var row = el("div", "f-row");
         row.setAttribute("role", "group");
         row.setAttribute("aria-label", d.label);
         row.appendChild(el("span", "f-label", d.label));
+        var chipBox = el("div", "f-chips");
+        chipBox.setAttribute("data-key", d.key);
+        row.appendChild(chipBox);
         var wait = d.needCounts && !coCountDone;
         // (d.toggle ? [d.toggle] : d.options).forEach(function (o) {
         (d.toggle ? [d.toggle] : (typeof d.options === "function" ? d.options() : d.options)).forEach(function (o) {
@@ -2309,15 +2409,23 @@
           b.disabled = wait;
           if (wait) b.title = "Counting matches\u2026";
           b.addEventListener("click", function () { toggleFilter(d.key, o); });
-          row.appendChild(b);
+          //row.appendChild(b);
+          chipBox.appendChild(b);
         });
         bar.appendChild(row);
+        if (keepScroll[d.key]) chipBox.scrollLeft = keepScroll[d.key];
       });
-      var clr = el("button", "btn btn-small btn-outline f-clear", "Clear filters");
-      clr.type = "button";
-      clr.disabled = !anyOn(page);
-      clr.addEventListener("click", clearFilters);
-      bar.appendChild(clr);
+      // var clr = el("button", "btn btn-small btn-outline f-clear", "Clear filters");
+      // clr.type = "button";
+      // clr.disabled = !anyOn(page);
+      // clr.addEventListener("click", clearFilters);
+      // bar.appendChild(clr);
+      updateClearBtn();   // Master Page: Clear filters is now the static button under the toolbar
+    }
+    // Clear filters row shows only while a chip or sort is on for the current tab
+    function updateClearBtn() {
+      var row = $("clearRow"); if (!row) return;
+      row.classList.toggle("hidden", !anyOn(page));
     }
     function toggleFilter(key, opt) {
       var st = filterState[page];
@@ -2378,7 +2486,9 @@
       refreshGroupsBtn();
     }
 
-    function available() { return data.items.filter(function (it) { return !it.approved; }); }
+    // function available() { return data.items.filter(function (it) { return !it.approved; }); }
+    // Master Page: jobs moved out of This Week (Locked) (canApprove === false) cannot be approved
+    function available() { return data.items.filter(function (it) { return !it.approved && it.canApprove !== false; }); }
     function selected() { return available().filter(function (it) { return choices[it.id] === "approve"; }); }
 
     /*
@@ -2520,6 +2630,24 @@
       var tb = $("tabBar"), st = $("stickyTools");
       if (tb && st) st.style.top = tb.offsetHeight + "px";
     }
+    // ---------- Master Page: review window (Mon 12:00 PM to Sat 12:00 PM, America/New_York) ----------
+    var REVIEW_TZ = "America/New_York";
+    var REVIEW_START = { dow: 1, hour: 12, min: 0 };   // Monday 12:00 PM
+    var REVIEW_END = { dow: 6, hour: 12, min: 0 };     // Saturday 12:00 PM
+    function inReviewWindow() {
+      try {
+        var parts = new Intl.DateTimeFormat("en-US", {
+          timeZone: REVIEW_TZ, weekday: "short", hour: "numeric", minute: "numeric", hourCycle: "h23"
+        }).formatToParts(new Date());
+        var p = {};
+        parts.forEach(function (x) { p[x.type] = x.value; });
+        var dow = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 }[p.weekday];
+        var t = dow * 1440 + Number(p.hour) * 60 + Number(p.minute);
+        var start = REVIEW_START.dow * 1440 + REVIEW_START.hour * 60 + REVIEW_START.min;
+        var end = REVIEW_END.dow * 1440 + REVIEW_END.hour * 60 + REVIEW_END.min;
+        return t >= start && t < end;
+      } catch (e) { return true; }   // if the time check fails, keep the buttons available
+    }
     // ---------- Init ----------
     (function init() {
       var sel = $("whoSelect");
@@ -2527,6 +2655,7 @@
         var o = el("option", null, n); o.value = n; if (i === 0) o.selected = true; sel.appendChild(o);
       });
       $("approveAllBtn").addEventListener("click", approveAll);
+      $("clearFiltersBtn").addEventListener("click", clearFilters);
       $("reviewBtn").addEventListener("click", openConfirm);
       $("cancelBtn").addEventListener("click", closeConfirm);
       $("submitBtn").addEventListener("click", submit);
